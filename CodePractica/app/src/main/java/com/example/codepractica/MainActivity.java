@@ -2,6 +2,7 @@ package com.example.codepractica;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,5 +31,11 @@ public class MainActivity extends AppCompatActivity {
             db.listaDao().obtenerTodas();
             Log.d("DB_TEST", "Base de datos inicializada");
         }).start();
+
+        // Configurar botón de salir
+        Button btnSalir = findViewById(R.id.btnSalir);
+        btnSalir.setOnClickListener(v -> {
+            finishAffinity(); // Cierra la aplicación y todas sus actividades
+        });
     }
 }

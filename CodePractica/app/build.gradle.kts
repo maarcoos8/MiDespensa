@@ -1,4 +1,4 @@
-plugins {
+    plugins {
     alias(libs.plugins.android.application)
 }
 
@@ -34,6 +34,9 @@ android {
 }
 
 dependencies {
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:${roomVersion}")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

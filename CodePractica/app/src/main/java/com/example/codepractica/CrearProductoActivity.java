@@ -26,7 +26,7 @@ import java.util.Locale;
 public class CrearProductoActivity extends AppCompatActivity {
 
     private EditText etNombre, etDescripcion, etUnidades;
-    private TextView tvCaducidad, tvInventarioSeleccionado, tvListaCompraSeleccionada;
+    private TextView tvCaducidad, tvInventarioSeleccionado, tvListaCompraSeleccionada, tvTitulo;
     private Spinner spinnerInventario, spinnerListaCompra;
     private Button btnGuardar, btnInventario, btnListaCompra;
     private ImageButton btnAtras, btnCancelar;
@@ -37,20 +37,35 @@ public class CrearProductoActivity extends AppCompatActivity {
     private int inventarioSeleccionadoId = -1; // -1 indica que no hay selección
     private int listaCompraSeleccionadaId = -1; // -1 indica que no hay selección
     private boolean almacenadoEnInventario = true; // Por defecto en inventario (pero no válido hasta seleccionar)
+    
+    // Variables para modo edición
+    private boolean modoEdicion = false;
+    private int productoIdEditar = -1;
+    private Producto productoOriginal = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_producto);
 
+        // Verificar si es modo edición
+        productoIdEditar = getIntent().getIntExtra("producto_id", -1);
+        modoEdicion = productoIdEditar != -1;
+
         inicializarVistas();
         cargarListas();
         configurarBotones();
+        
+        // Si es modo edición, cargar los datos del producto
+        if (modoEdicion) {
+            cargarDatosProducto();
+        }
     }
 
     private void inicializarVistas() {
         btnAtras = findViewById(R.id.btnAtras);
         btnCancelar = findViewById(R.id.btnCancelar);
+        tvTitulo = findViewById(R.id.tvTitulo);
         etNombre = findViewById(R.id.etNombre);
         etDescripcion = findViewById(R.id.etDescripcion);
         etUnidades = findViewById(R.id.etUnidades);
@@ -62,6 +77,12 @@ public class CrearProductoActivity extends AppCompatActivity {
         btnInventario = findViewById(R.id.btnInventario);
         btnListaCompra = findViewById(R.id.btnListaCompra);
         btnGuardar = findViewById(R.id.btnGuardar);
+        
+        // Cambiar título según el modo
+        if (modoEdicion) {
+            tvTitulo.setText("Editar Producto");
+            btnGuardar.setText("Actualizar");
+        }
     }
 
     private void cargarListas() {
@@ -97,9 +118,29 @@ public class CrearProductoActivity extends AppCompatActivity {
                 spinnerListaCompra.setAdapter(adapterLista);
                 spinnerListaCompra.setSelection(0); // Seleccionar la opción "Selecciona..."
 
-                // No establecer valores por defecto
-                tvInventarioSeleccionado.setText("Selecciona un inventario");
-                tvListaCompraSeleccionada.setText("Selecciona una lista");
+                // Establecer valores según el modo
+                if (modoEdicion && productoOriginal != null) {
+                    // Modo edición: seleccionar las listas del producto
+                    for (int i = 0; i < listaInventarios.size(); i++) {
+                        if (listaInventarios.get(i).id == productoOriginal.lista_inventario) {
+                            spinnerInventario.setSelection(i + 1); // +1 por el placeholder
+                            tvInventarioSeleccionado.setText(listaInventarios.get(i).nombre);
+                            break;
+                        }
+                    }
+                    
+                    for (int i = 0; i < listaCompras.size(); i++) {
+                        if (listaCompras.get(i).id == productoOriginal.lista_compra) {
+                            spinnerListaCompra.setSelection(i + 1); // +1 por el placeholder
+                            tvListaCompraSeleccionada.setText(listaCompras.get(i).nombre);
+                            break;
+                        }
+                    }
+                } else {
+                    // Modo creación: no establecer valores por defecto
+                    tvInventarioSeleccionado.setText("Selecciona un inventario");
+                    tvListaCompraSeleccionada.setText("Selecciona una lista");
+                }
             });
         }).start();
     }
@@ -176,6 +217,56 @@ public class CrearProductoActivity extends AppCompatActivity {
         }
     }
 
+    private void cargarDatosProducto() {
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getInstance(this);
+            List<Producto> productos = db.productoDao().obtenerTodos();
+            
+            // Buscar el producto por ID
+            for (Producto p : productos) {
+                if (p.id == productoIdEditar) {
+                    productoOriginal = p;
+                    break;
+                }
+            }
+            
+            if (productoOriginal == null) {
+                runOnUiThread(() -> {
+                    mostrarDialogoError("Error", "Producto no encontrado");
+                    finish();
+                });
+                return;
+            }
+            
+            runOnUiThread(() -> {
+                // Cargar datos en los campos
+                etNombre.setText(productoOriginal.nombre);
+                etDescripcion.setText(productoOriginal.descripcion != null ? productoOriginal.descripcion : "");
+                etUnidades.setText(String.valueOf(productoOriginal.unidades));
+                
+                // Cargar fecha de caducidad
+                if (productoOriginal.caducidad != null && productoOriginal.caducidad > 0) {
+                    caducidadTimestamp = productoOriginal.caducidad;
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+                    tvCaducidad.setText(sdf.format(new java.util.Date(productoOriginal.caducidad)));
+                    tvCaducidad.setTextColor(getResources().getColor(android.R.color.black));
+                }
+                
+                // Establecer las listas seleccionadas (se hará después de cargar las listas)
+                inventarioSeleccionadoId = productoOriginal.lista_inventario;
+                listaCompraSeleccionadaId = productoOriginal.lista_compra;
+                
+                // Determinar dónde está almacenado
+                if (productoOriginal.almacenado == productoOriginal.lista_inventario) {
+                    almacenadoEnInventario = true;
+                } else {
+                    almacenadoEnInventario = false;
+                }
+                actualizarEstadoBotones();
+            });
+        }).start();
+    }
+
     private void mostrarSelectorFecha() {
         Calendar calendar = Calendar.getInstance();
         
@@ -206,21 +297,26 @@ public class CrearProductoActivity extends AppCompatActivity {
             return;
         }
 
-        // Validar que se haya seleccionado al menos un inventario o una lista de compra
-        if (inventarioSeleccionadoId == -1 && listaCompraSeleccionadaId == -1) {
-            mostrarDialogoError("Error", "Por favor, selecciona al menos un inventario o una lista de compra");
+        // VALIDACIONES OBLIGATORIAS: Debe tener ambas listas seleccionadas
+        if (inventarioSeleccionadoId == -1) {
+            mostrarDialogoError("Error de Validación", "Debes seleccionar obligatoriamente una lista de inventario para el producto");
+            return;
+        }
+
+        if (listaCompraSeleccionadaId == -1) {
+            mostrarDialogoError("Error de Validación", "Debes seleccionar obligatoriamente una lista de compra para el producto");
             return;
         }
 
         // Validar según dónde se almacenará
         if (almacenadoEnInventario) {
-            // Si se almacena en inventario, debe tener un inventario seleccionado
+            // Si se almacena en inventario, verificar que haya un inventario seleccionado (ya validado arriba)
             if (inventarioSeleccionadoId == -1) {
                 mostrarDialogoError("Error", "Por favor, selecciona un inventario para almacenar el producto");
                 return;
             }
         } else {
-            // Si se almacena en lista de compra, debe tener una lista seleccionada
+            // Si se almacena en lista de compra, verificar que haya una lista seleccionada (ya validado arriba)
             if (listaCompraSeleccionadaId == -1) {
                 mostrarDialogoError("Error", "Por favor, selecciona una lista de compra para almacenar el producto");
                 return;
@@ -247,29 +343,46 @@ public class CrearProductoActivity extends AppCompatActivity {
             return;
         }
 
-        // Crear producto
-        Producto nuevoProducto = new Producto();
-        nuevoProducto.nombre = nombre;
-        nuevoProducto.descripcion = descripcion.isEmpty() ? null : descripcion;
-        nuevoProducto.unidades = unidades;
-        nuevoProducto.caducidad = caducidadTimestamp > 0 ? caducidadTimestamp : null;
-        nuevoProducto.imagen = "";
+        // Crear o actualizar producto
+        Producto producto;
+        if (modoEdicion) {
+            // Modo edición: usar el producto original y actualizar sus valores
+            producto = productoOriginal;
+        } else {
+            // Modo creación: crear nuevo producto
+            producto = new Producto();
+        }
         
-        // Asignar inventario y lista de compra (pueden ser -1 si no se seleccionó)
-        nuevoProducto.lista_inventario = inventarioSeleccionadoId > 0 ? inventarioSeleccionadoId : 0;
-        nuevoProducto.lista_compra = listaCompraSeleccionadaId > 0 ? listaCompraSeleccionadaId : 0;
+        producto.nombre = nombre;
+        producto.descripcion = descripcion.isEmpty() ? null : descripcion;
+        producto.unidades = unidades;
+        producto.caducidad = caducidadTimestamp > 0 ? caducidadTimestamp : null;
+        
+        if (!modoEdicion) {
+            producto.imagen = "";
+        }
+        
+        // Asignar inventario y lista de compra
+        producto.lista_inventario = inventarioSeleccionadoId > 0 ? inventarioSeleccionadoId : 0;
+        producto.lista_compra = listaCompraSeleccionadaId > 0 ? listaCompraSeleccionadaId : 0;
         
         // Determinar dónde está almacenado
         if (almacenadoEnInventario) {
-            nuevoProducto.almacenado = inventarioSeleccionadoId;
+            producto.almacenado = inventarioSeleccionadoId;
         } else {
-            nuevoProducto.almacenado = listaCompraSeleccionadaId;
+            producto.almacenado = listaCompraSeleccionadaId;
         }
 
         // Guardar en base de datos
+        Producto finalProducto = producto;
         new Thread(() -> {
             AppDatabase db = AppDatabase.getInstance(this);
-            db.productoDao().insertar(nuevoProducto);
+            
+            if (modoEdicion) {
+                db.productoDao().actualizar(finalProducto);
+            } else {
+                db.productoDao().insertar(finalProducto);
+            }
 
             runOnUiThread(() -> {
                 mostrarDialogoExito();
@@ -287,9 +400,10 @@ public class CrearProductoActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogoExito() {
+        String mensaje = modoEdicion ? "Producto actualizado correctamente" : "Producto creado correctamente";
         new AlertDialog.Builder(this)
                 .setTitle("Éxito")
-                .setMessage("Producto creado correctamente")
+                .setMessage(mensaje)
                 .setPositiveButton("Aceptar", (dialog, which) -> {
                     setResult(RESULT_OK);
                     finish();

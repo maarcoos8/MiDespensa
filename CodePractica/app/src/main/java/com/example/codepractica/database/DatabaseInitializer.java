@@ -41,6 +41,28 @@ public class DatabaseInitializer {
             listaBotiquin.imagen = "";
             long idBotiquin = db.listaDao().insertar(listaBotiquin);
 
+            // Crear listas de la compra
+            Lista listaCompraNevera = new Lista();
+            listaCompraNevera.nombre = "Compra nevera";
+            listaCompraNevera.descripcion = "Productos refrigerados";
+            listaCompraNevera.tipo = "ListaCompra";
+            listaCompraNevera.imagen = "";
+            long idCompraNevera = db.listaDao().insertar(listaCompraNevera);
+
+            Lista listaCompraDespensa = new Lista();
+            listaCompraDespensa.nombre = "Compra despensa";
+            listaCompraDespensa.descripcion = "Productos no perecederos";
+            listaCompraDespensa.tipo = "ListaCompra";
+            listaCompraDespensa.imagen = "";
+            long idCompraDespensa = db.listaDao().insertar(listaCompraDespensa);
+
+            Lista listaCompraFarmacia = new Lista();
+            listaCompraFarmacia.nombre = "Compra farmacia";
+            listaCompraFarmacia.descripcion = "Medicamentos y productos de salud";
+            listaCompraFarmacia.tipo = "ListaCompra";
+            listaCompraFarmacia.imagen = "";
+            long idCompraFarmacia = db.listaDao().insertar(listaCompraFarmacia);
+
             // Crear productos de ejemplo
             
             // Productos de nevera
@@ -52,7 +74,7 @@ public class DatabaseInitializer {
             lecheEntera.imagen = "";
             lecheEntera.almacenado = (int) idNevera;
             lecheEntera.lista_inventario = (int) idNevera;
-            lecheEntera.lista_compra = 0;
+            lecheEntera.lista_compra = (int) idCompraNevera;
             db.productoDao().insertar(lecheEntera);
 
             Producto huevosL = new Producto();
@@ -63,7 +85,7 @@ public class DatabaseInitializer {
             huevosL.imagen = "";
             huevosL.almacenado = (int) idNevera;
             huevosL.lista_inventario = (int) idNevera;
-            huevosL.lista_compra = 0;
+            huevosL.lista_compra = (int) idCompraNevera;
             db.productoDao().insertar(huevosL);
 
             // Productos de botiquín
@@ -75,7 +97,7 @@ public class DatabaseInitializer {
             ibuprofeno.imagen = "";
             ibuprofeno.almacenado = (int) idBotiquin;
             ibuprofeno.lista_inventario = (int) idBotiquin;
-            ibuprofeno.lista_compra = 0;
+            ibuprofeno.lista_compra = (int) idCompraFarmacia;
             db.productoDao().insertar(ibuprofeno);
 
             // Productos de despensa
@@ -87,7 +109,7 @@ public class DatabaseInitializer {
             macarrones.imagen = "";
             macarrones.almacenado = (int) idDespensa;
             macarrones.lista_inventario = (int) idDespensa;
-            macarrones.lista_compra = 0;
+            macarrones.lista_compra = (int) idCompraDespensa;
             db.productoDao().insertar(macarrones);
 
             Producto aceiteOliva = new Producto();
@@ -98,7 +120,7 @@ public class DatabaseInitializer {
             aceiteOliva.imagen = "";
             aceiteOliva.almacenado = (int) idDespensa;
             aceiteOliva.lista_inventario = (int) idDespensa;
-            aceiteOliva.lista_compra = 0;
+            aceiteOliva.lista_compra = (int) idCompraDespensa;
             db.productoDao().insertar(aceiteOliva);
 
         }).start();

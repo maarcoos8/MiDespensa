@@ -24,7 +24,7 @@ public class DetalleProductoActivity extends AppCompatActivity {
 
     private Producto producto;
     private ImageView ivProductoImagen;
-    private TextView tvNombre, tvDescripcion, tvCantidad, tvCaducidad, tvUbicacion, tvListaCompra;
+    private TextView tvNombre, tvDescripcion, tvCantidad, tvCaducidad, tvUbicacion, tvListaCompra, tvListaInventario;
     private Button btnEliminar, btnEditar;
     private ImageButton btnAtras;
 
@@ -56,6 +56,7 @@ public class DetalleProductoActivity extends AppCompatActivity {
         tvCaducidad = findViewById(R.id.tvCaducidad);
         tvUbicacion = findViewById(R.id.tvUbicacion);
         tvListaCompra = findViewById(R.id.tvListaCompra);
+        tvListaInventario = findViewById(R.id.tvListaInventario);
         btnEliminar = findViewById(R.id.btnEliminar);
     }
 
@@ -83,6 +84,7 @@ public class DetalleProductoActivity extends AppCompatActivity {
             // Obtener información de las listas
             String ubicacion = "Sin asignar";
             String listaCompra = "Sin asignar";
+            String listaInventario = "Sin asignar";
 
             if (producto.almacenado > 0) {
                 List<Lista> listas = db.listaDao().obtenerTodas();
@@ -104,8 +106,19 @@ public class DetalleProductoActivity extends AppCompatActivity {
                 }
             }
 
+            if (producto.lista_inventario > 0) {
+                List<Lista> listas = db.listaDao().obtenerTodas();
+                for (Lista lista : listas) {
+                    if (lista.id == producto.lista_inventario) {
+                        listaInventario = lista.nombre;
+                        break;
+                    }
+                }
+            }
+
             String finalUbicacion = ubicacion;
             String finalListaCompra = listaCompra;
+            String finalListaInventario = listaInventario;
 
             runOnUiThread(() -> {
                 // Establecer datos en las vistas
@@ -123,6 +136,7 @@ public class DetalleProductoActivity extends AppCompatActivity {
 
                 tvUbicacion.setText(finalUbicacion);
                 tvListaCompra.setText(finalListaCompra);
+                tvListaInventario.setText(finalListaInventario);
 
                 // TODO: Cargar imagen real del producto
                 ivProductoImagen.setImageResource(R.drawable.ic_products);
@@ -134,8 +148,9 @@ public class DetalleProductoActivity extends AppCompatActivity {
         btnAtras.setOnClickListener(v -> finish());
 
         btnEditar.setOnClickListener(v -> {
-            // TODO: Navegar a la pantalla de edición
-            Toast.makeText(this, "Función de editar en desarrollo", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, CrearProductoActivity.class);
+            intent.putExtra("producto_id", producto.id);
+            startActivityForResult(intent, 2); // Código de request 2 para edición
         });
 
         btnEliminar.setOnClickListener(v -> mostrarDialogoEliminar());
@@ -144,6 +159,12 @@ public class DetalleProductoActivity extends AppCompatActivity {
         findViewById(R.id.layoutUbicacion).setOnClickListener(v -> {
             // TODO: Navegar a cambiar ubicación
             Toast.makeText(this, "Cambiar ubicación (próximamente)", Toast.LENGTH_SHORT).show();
+        });
+
+        // Click en lista de inventario
+        findViewById(R.id.layoutListaInventario).setOnClickListener(v -> {
+            // TODO: Navegar a cambiar lista de inventario
+            Toast.makeText(this, "Cambiar lista de inventario (próximamente)", Toast.LENGTH_SHORT).show();
         });
 
         // Click en lista de compra
@@ -174,5 +195,14 @@ public class DetalleProductoActivity extends AppCompatActivity {
                 finish();
             });
         }).start();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2 && resultCode == RESULT_OK) {
+            // El producto fue editado, recargar los datos
+            cargarProducto(producto.id);
+        }
     }
 }

@@ -154,7 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="baseline">
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:id="@+id/tvCantidad"
@@ -323,6 +323,70 @@
                         android:background="#F0F0F0"
                         android:layout_marginHorizontal="16dp" />
 
+                    <!-- Lista de Inventario -->
+                    <LinearLayout
+                        android:id="@+id/layoutListaInventario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#FFF3E0">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_inventory"
+                                app:tint="#FF9800" />
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Lista de Inventario"
+                                android:textSize="12sp"
+                                android:textColor="#999999" />
+
+                            <TextView
+                                android:id="@+id/tvListaInventario"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Sin asignar"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="#000000"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_arrow_right"
+                            app:tint="#CCCCCC" />
+                    </LinearLayout>
+
+                    <!-- Divisor -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F0F0F0"
+                        android:layout_marginHorizontal="16dp" />
+
                     <!-- Lista de Compra -->
                     <LinearLayout
                         android:id="@+id/layoutListaCompra"
@@ -391,10 +455,10 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="32dp"
             android:text="Eliminar Producto"
-            android:textColor="#F44336"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:background="@drawable/bg_button_delete"
+            android:backgroundTint="#F44336"
             android:drawableStart="@drawable/ic_delete"
             android:drawablePadding="8dp"
             android:gravity="center"

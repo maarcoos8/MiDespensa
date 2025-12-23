@@ -53,5 +53,21 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, ProductosActivity.class);
             startActivity(intent);
         });
+
+        // Configurar botón de ver inventarios
+        Button btnVerInventarios = findViewById(R.id.btnVerInventarios);
+        btnVerInventarios.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ListasActivity.class);
+            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_INVENTARIO);
+            startActivity(intent);
+        });
+
+        // Configurar botón de ver listas de compra
+        Button btnVerListas = findViewById(R.id.btnVerListas);
+        btnVerListas.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ListasActivity.class);
+            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_COMPRA);
+            startActivity(intent);
+        });
     }
 }

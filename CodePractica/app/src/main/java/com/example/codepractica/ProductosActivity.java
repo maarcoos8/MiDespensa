@@ -48,6 +48,12 @@ public class ProductosActivity extends AppCompatActivity {
         // Configurar el botón de atrás
         findViewById(R.id.btnAtras).setOnClickListener(v -> finish());
 
+        // Configurar el botón flotante para añadir nuevo producto
+        findViewById(R.id.fabAnadirProducto).setOnClickListener(v -> {
+            Intent intent = new Intent(this, CrearProductoActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_DETALLE);
+        });
+
         // Configurar la búsqueda
         etBuscar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -115,20 +121,16 @@ public class ProductosActivity extends AppCompatActivity {
 
         // Inventario
         findViewById(R.id.navInventario).setOnClickListener(v -> {
-            // TODO: Navegar a InventarioActivity cuando esté creada
-            // startActivity(new Intent(this, InventarioActivity.class));
-        });
-
-        // Botón de añadir
-        findViewById(R.id.navAnadir).setOnClickListener(v -> {
-            Intent intent = new Intent(this, CrearProductoActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_DETALLE);
+            Intent intent = new Intent(this, ListasActivity.class);
+            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_INVENTARIO);
+            startActivity(intent);
         });
 
         // Lista
         findViewById(R.id.navLista).setOnClickListener(v -> {
-            // TODO: Navegar a ListaActivity cuando esté creada
-            // startActivity(new Intent(this, ListaActivity.class));
+            Intent intent = new Intent(this, ListasActivity.class);
+            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_COMPRA);
+            startActivity(intent);
         });
 
         // Ajustes

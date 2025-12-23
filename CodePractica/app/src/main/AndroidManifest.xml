@@ -30,6 +30,20 @@
             android:name=".CrearProductoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CrearListaActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".VerListaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditarListaActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

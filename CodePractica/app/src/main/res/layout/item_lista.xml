@@ -18,17 +18,22 @@
         android:padding="20dp"
         android:gravity="center_vertical">
 
-        <!-- Imagen de la lista (opcional) -->
-        <ImageView
-            android:id="@+id/ivImagenLista"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="centerCrop"
-            android:background="#E0E0E0"
-            android:src="@drawable/ic_shopping_list"
-            android:padding="10dp"
-            android:layout_marginEnd="16dp"
-            android:visibility="visible" />
+        <!-- Imagen de la lista con esquinas redondeadas -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#E0E0E0"
+            android:layout_marginEnd="16dp">
+
+            <ImageView
+                android:id="@+id/ivImagenLista"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_shopping_list" />
+        </androidx.cardview.widget.CardView>
 
         <!-- Contenedor de texto (nombre y cantidad de artículos) -->
         <LinearLayout

@@ -159,7 +159,7 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:src="@drawable/ic_settings"
+                            android:src="@drawable/ic_edit"
                             app:tint="#10B981" />
                     </LinearLayout>
 
@@ -236,7 +236,7 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:src="@drawable/ic_settings"
+                            android:src="@drawable/ic_edit"
                             app:tint="#FF9800" />
                     </LinearLayout>
 

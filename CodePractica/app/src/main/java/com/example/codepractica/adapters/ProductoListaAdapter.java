@@ -5,18 +5,24 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.codepractica.DetalleProductoActivity;
 import com.example.codepractica.R;
+import com.example.codepractica.database.AppDatabase;
+import com.example.codepractica.database.entities.Lista;
 import com.example.codepractica.database.entities.Producto;
 
 import java.util.Calendar;
@@ -57,6 +63,29 @@ public class ProductoListaAdapter extends RecyclerView.Adapter<ProductoListaAdap
             textoCantidad = producto.unidades + " uds.";
         }
         holder.tvCantidad.setText(textoCantidad);
+
+        // Mostrar checkbox solo en listas de compra (no en inventarios)
+        if (!esInventario) {
+            holder.checkboxProducto.setVisibility(View.VISIBLE);
+            holder.checkboxProducto.setChecked(false);
+            
+            // Configurar el listener del checkbox
+            holder.checkboxProducto.setOnCheckedChangeListener(null); // Limpiar listener anterior
+            holder.checkboxProducto.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    // Deshabilitar más interacciones mientras se procesa
+                    holder.checkboxProducto.setEnabled(false);
+                    holder.itemView.setEnabled(false);
+                    
+                    // Esperar 1 segundo y luego mover el producto al inventario
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        moverProductoAInventario(producto, position);
+                    }, 1000);
+                }
+            });
+        } else {
+            holder.checkboxProducto.setVisibility(View.GONE);
+        }
 
         // Mostrar indicador de caducidad solo si es inventario y tiene fecha de caducidad
         if (esInventario && producto.caducidad != null && producto.caducidad > 0) {
@@ -150,6 +179,48 @@ public class ProductoListaAdapter extends RecyclerView.Adapter<ProductoListaAdap
             }
         }
     }
+    
+    private void moverProductoAInventario(Producto producto, int position) {
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getInstance(context);
+            
+            // Verificar si el producto tiene un inventario asignado
+            if (producto.lista_inventario <= 0) {
+                // Si no tiene inventario asignado, mostrar error
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Toast.makeText(context, "Este producto no tiene un inventario asignado", Toast.LENGTH_SHORT).show();
+                    // Remover el producto de la lista de compra de todas formas
+                    listaProductos.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, listaProductos.size());
+                });
+                return;
+            }
+            
+            // Obtener el nombre del inventario de destino
+            Lista inventario = db.listaDao().obtenerTodas().stream()
+                    .filter(l -> l.id == producto.lista_inventario)
+                    .findFirst()
+                    .orElse(null);
+            
+            String nombreInventario = inventario != null ? inventario.nombre : "inventario";
+            
+            // Mover el producto al inventario
+            producto.almacenado = producto.lista_inventario;
+            db.productoDao().actualizar(producto);
+            
+            // Actualizar la UI en el hilo principal
+            new Handler(Looper.getMainLooper()).post(() -> {
+                // Remover el producto de la lista
+                listaProductos.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, listaProductos.size());
+                
+                // Mostrar mensaje de confirmación
+                Toast.makeText(context, "Producto añadido a " + nombreInventario, Toast.LENGTH_SHORT).show();
+            });
+        }).start();
+    }
 
     static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre;
@@ -158,6 +229,7 @@ public class ProductoListaAdapter extends RecyclerView.Adapter<ProductoListaAdap
         TextView tvCaducidad;
         View viewIndicador;
         ImageView ivImagen;
+        CheckBox checkboxProducto;
 
         public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -167,6 +239,7 @@ public class ProductoListaAdapter extends RecyclerView.Adapter<ProductoListaAdap
             tvCaducidad = itemView.findViewById(R.id.tvCaducidad);
             viewIndicador = itemView.findViewById(R.id.viewIndicadorCaducidad);
             ivImagen = itemView.findViewById(R.id.ivProductoImagen);
+            checkboxProducto = itemView.findViewById(R.id.checkboxProducto);
         }
     }
 }

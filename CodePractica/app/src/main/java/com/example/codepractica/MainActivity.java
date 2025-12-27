@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         // Configurar botón de salir
         Button btnSalir = findViewById(R.id.btnSalir);
         btnSalir.setOnClickListener(v -> {
-            finishAffinity(); // Cierra la aplicación y todas sus actividades
+            finishAffinity(); // Cierra la aplicación y todas sus activZidades
         });
 
         // Configurar botón de ver productos

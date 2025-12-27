@@ -470,7 +470,10 @@ public class CrearProductoActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                mostrarDialogoExito();
+                String mensaje = modoEdicion ? "Producto actualizado" : "Producto creado";
+                Toast.makeText(CrearProductoActivity.this, mensaje, Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
             });
         }).start();
     }
@@ -484,19 +487,7 @@ public class CrearProductoActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void mostrarDialogoExito() {
-        String mensaje = modoEdicion ? "Producto actualizado correctamente" : "Producto creado correctamente";
-        new AlertDialog.Builder(this)
-                .setTitle("Éxito")
-                .setMessage(mensaje)
-                .setPositiveButton("Aceptar", (dialog, which) -> {
-                    setResult(RESULT_OK);
-                    finish();
-                })
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setCancelable(false)
-                .show();
-    }
+
     
     private void mostrarImagen(String imagePath) {
         ivFotoProducto.setVisibility(View.VISIBLE);

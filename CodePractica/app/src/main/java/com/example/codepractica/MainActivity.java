@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Eliminar la base de datos para forzar la reinicialización
-        this.deleteDatabase("despensa_db");
+        // this.deleteDatabase("despensa_db");
 
         AppDatabase db = AppDatabase.getInstance(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

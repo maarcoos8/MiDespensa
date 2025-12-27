@@ -1,21 +1,37 @@
 package com.example.codepractica;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.material.button.MaterialButton;
 import com.example.codepractica.database.AppDatabase;
 import com.example.codepractica.database.entities.Lista;
 import com.example.codepractica.database.entities.Producto;
+import com.example.codepractica.utils.ImageHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,20 +44,31 @@ public class CrearProductoActivity extends AppCompatActivity {
     private EditText etNombre, etDescripcion, etUnidades;
     private TextView tvCaducidad, tvInventarioSeleccionado, tvListaCompraSeleccionada, tvTitulo;
     private Spinner spinnerInventario, spinnerListaCompra;
-    private Button btnGuardar, btnInventario, btnListaCompra;
-    private ImageButton btnAtras, btnCancelar;
+    private Button btnGuardar;
+    private MaterialButton btnInventario, btnListaCompra;
+    private ImageButton btnAtras;
+    private CardView cardAnadirFoto;
+    private ImageView ivFotoProducto;
+    private LinearLayout layoutPlaceholder;
     
     private long caducidadTimestamp = 0;
     private List<Lista> listaInventarios;
     private List<Lista> listaCompras;
-    private int inventarioSeleccionadoId = -1; // -1 indica que no hay selección
-    private int listaCompraSeleccionadaId = -1; // -1 indica que no hay selección
-    private boolean almacenadoEnInventario = true; // Por defecto en inventario (pero no válido hasta seleccionar)
+    private int inventarioSeleccionadoId = -1;
+    private int listaCompraSeleccionadaId = -1;
+    private boolean almacenadoEnInventario = true;
+    private String imagenPath = null;
     
     // Variables para modo edición
     private boolean modoEdicion = false;
     private int productoIdEditar = -1;
     private Producto productoOriginal = null;
+    
+    // Launchers para imagen
+    private ActivityResultLauncher<Intent> cameraLauncher;
+    private ActivityResultLauncher<Intent> galleryLauncher;
+    private ActivityResultLauncher<String> permissionLauncher;
+    private ImageHelper imageHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +79,7 @@ public class CrearProductoActivity extends AppCompatActivity {
         productoIdEditar = getIntent().getIntExtra("producto_id", -1);
         modoEdicion = productoIdEditar != -1;
 
+        inicializarLaunchers();
         inicializarVistas();
         cargarListas();
         configurarBotones();
@@ -61,10 +89,56 @@ public class CrearProductoActivity extends AppCompatActivity {
             cargarDatosProducto();
         }
     }
+    
+    private void inicializarLaunchers() {
+        // Launcher para la cámara
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        imageHelper.handleCameraResult();
+                    }
+                });
+        
+        // Launcher para la galería
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        imageHelper.handleGalleryResult(result.getData());
+                    }
+                });
+        
+        // Launcher para permisos
+        permissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        imageHelper.showImageSourceDialog(imagenPath != null);
+                    } else {
+                        Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        
+        // Inicializar ImageHelper
+        imageHelper = new ImageHelper(this, cameraLauncher, galleryLauncher, permissionLauncher,
+                new ImageHelper.ImageSelectionCallback() {
+                    @Override
+                    public void onImageSelected(String imagePath) {
+                        imagenPath = imagePath;
+                        mostrarImagen(imagePath);
+                    }
+
+                    @Override
+                    public void onImageDeleted() {
+                        imagenPath = null;
+                        ocultarImagen();
+                    }
+                });
+    }
 
     private void inicializarVistas() {
         btnAtras = findViewById(R.id.btnAtras);
-        btnCancelar = findViewById(R.id.btnCancelar);
         tvTitulo = findViewById(R.id.tvTitulo);
         etNombre = findViewById(R.id.etNombre);
         etDescripcion = findViewById(R.id.etDescripcion);
@@ -77,6 +151,9 @@ public class CrearProductoActivity extends AppCompatActivity {
         btnInventario = findViewById(R.id.btnInventario);
         btnListaCompra = findViewById(R.id.btnListaCompra);
         btnGuardar = findViewById(R.id.btnGuardar);
+        cardAnadirFoto = findViewById(R.id.cardAnadirFoto);
+        ivFotoProducto = findViewById(R.id.ivFotoProducto);
+        layoutPlaceholder = findViewById(R.id.layoutPlaceholder);
         
         // Cambiar título según el modo
         if (modoEdicion) {
@@ -147,7 +224,6 @@ public class CrearProductoActivity extends AppCompatActivity {
 
     private void configurarBotones() {
         btnAtras.setOnClickListener(v -> finish());
-        btnCancelar.setOnClickListener(v -> finish());
 
         // Selector de caducidad
         findViewById(R.id.layoutCaducidad).setOnClickListener(v -> mostrarSelectorFecha());
@@ -203,18 +279,24 @@ public class CrearProductoActivity extends AppCompatActivity {
         // Botón guardar
         btnGuardar.setOnClickListener(v -> guardarProducto());
 
+        // Click en la foto
+        cardAnadirFoto.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                permissionLauncher.launch(Manifest.permission.CAMERA);
+            } else {
+                imageHelper.showImageSourceDialog(imagenPath != null);
+            }
+        });
+
         // Estado inicial
         actualizarEstadoBotones();
     }
 
     private void actualizarEstadoBotones() {
-        if (almacenadoEnInventario) {
-            btnInventario.setBackgroundResource(R.drawable.bg_button_almacenado_selected);
-            btnListaCompra.setBackgroundResource(R.drawable.bg_button_almacenado);
-        } else {
-            btnInventario.setBackgroundResource(R.drawable.bg_button_almacenado);
-            btnListaCompra.setBackgroundResource(R.drawable.bg_button_almacenado_selected);
-        }
+        // Actualizar el estado checked de los botones
+        btnInventario.setChecked(almacenadoEnInventario);
+        btnListaCompra.setChecked(!almacenadoEnInventario);
     }
 
     private void cargarDatosProducto() {
@@ -243,6 +325,12 @@ public class CrearProductoActivity extends AppCompatActivity {
                 etNombre.setText(productoOriginal.nombre);
                 etDescripcion.setText(productoOriginal.descripcion != null ? productoOriginal.descripcion : "");
                 etUnidades.setText(String.valueOf(productoOriginal.unidades));
+                
+                // Cargar imagen si existe
+                if (productoOriginal.imagen != null && !productoOriginal.imagen.isEmpty()) {
+                    imagenPath = productoOriginal.imagen;
+                    mostrarImagen(imagenPath);
+                }
                 
                 // Cargar fecha de caducidad
                 if (productoOriginal.caducidad != null && productoOriginal.caducidad > 0) {
@@ -357,10 +445,7 @@ public class CrearProductoActivity extends AppCompatActivity {
         producto.descripcion = descripcion.isEmpty() ? null : descripcion;
         producto.unidades = unidades;
         producto.caducidad = caducidadTimestamp > 0 ? caducidadTimestamp : null;
-        
-        if (!modoEdicion) {
-            producto.imagen = "";
-        }
+        producto.imagen = imagenPath; // Guardar la ruta de la imagen
         
         // Asignar inventario y lista de compra
         producto.lista_inventario = inventarioSeleccionadoId > 0 ? inventarioSeleccionadoId : 0;
@@ -411,5 +496,28 @@ public class CrearProductoActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setCancelable(false)
                 .show();
+    }
+    
+    private void mostrarImagen(String imagePath) {
+        ivFotoProducto.setVisibility(View.VISIBLE);
+        layoutPlaceholder.setVisibility(View.GONE);
+        
+        // Cargar la imagen
+        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
+            // Es una URI
+            ivFotoProducto.setImageURI(Uri.parse(imagePath));
+        } else {
+            // Es una ruta de archivo
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            if (bitmap != null) {
+                ivFotoProducto.setImageBitmap(bitmap);
+            }
+        }
+    }
+    
+    private void ocultarImagen() {
+        ivFotoProducto.setVisibility(View.GONE);
+        layoutPlaceholder.setVisibility(View.VISIBLE);
+        ivFotoProducto.setImageDrawable(null);
     }
 }

@@ -1,6 +1,9 @@
 package com.example.codepractica;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -138,10 +141,41 @@ public class DetalleProductoActivity extends AppCompatActivity {
                 tvListaCompra.setText(finalListaCompra);
                 tvListaInventario.setText(finalListaInventario);
 
-                // TODO: Cargar imagen real del producto
-                ivProductoImagen.setImageResource(R.drawable.ic_products);
+                // Cargar imagen del producto
+                if (producto.imagen != null && !producto.imagen.isEmpty()) {
+                    cargarImagen(producto.imagen);
+                } else {
+                    ivProductoImagen.setImageResource(R.drawable.ic_products);
+                    ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                }
             });
         }).start();
+    }
+    
+    private void cargarImagen(String imagePath) {
+        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
+            try {
+                ivProductoImagen.setImageURI(Uri.parse(imagePath));
+                ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            } catch (Exception e) {
+                ivProductoImagen.setImageResource(R.drawable.ic_products);
+                ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            }
+        } else {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                if (bitmap != null) {
+                    ivProductoImagen.setImageBitmap(bitmap);
+                    ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                } else {
+                    ivProductoImagen.setImageResource(R.drawable.ic_products);
+                    ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                }
+            } catch (Exception e) {
+                ivProductoImagen.setImageResource(R.drawable.ic_products);
+                ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            }
+        }
     }
 
     private void configurarBotones() {

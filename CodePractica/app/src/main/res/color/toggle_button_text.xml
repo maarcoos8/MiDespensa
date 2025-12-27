@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Color de texto cuando está seleccionado -->
+    <item android:color="#10B981" android:state_checked="true"/>
+    <!-- Color de texto por defecto -->
+    <item android:color="#FFFFFF"/>
+</selector>

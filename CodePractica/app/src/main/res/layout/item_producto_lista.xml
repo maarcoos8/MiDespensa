@@ -18,15 +18,21 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Imagen del producto -->
-        <ImageView
-            android:id="@+id/ivProductoImagen"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:scaleType="centerCrop"
-            android:background="#E0E0E0"
-            android:src="@drawable/ic_products"
-            android:padding="12dp" />
+        <!-- Imagen del producto con esquinas redondeadas -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#E0E0E0">
+
+            <ImageView
+                android:id="@+id/ivProductoImagen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_products" />
+        </androidx.cardview.widget.CardView>
 
         <!-- Contenedor de texto (nombre, cantidad y caducidad) -->
         <LinearLayout

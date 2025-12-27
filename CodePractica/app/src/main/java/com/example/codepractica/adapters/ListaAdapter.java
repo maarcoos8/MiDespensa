@@ -1,10 +1,14 @@
 package com.example.codepractica.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -57,8 +61,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
 
         // Configurar la imagen según el tipo de lista
         if (lista.imagen != null && !lista.imagen.isEmpty()) {
-            // TODO: Cargar imagen desde ruta cuando se implemente
-            holder.ivImagen.setImageResource(R.drawable.ic_shopping_list);
+            cargarImagen(holder.ivImagen, lista.imagen);
         } else {
             // Mostrar icono por defecto según el tipo
             if ("ListaInventario".equals(lista.tipo)) {
@@ -66,6 +69,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
             } else {
                 holder.ivImagen.setImageResource(R.drawable.ic_shopping_list);
             }
+            holder.ivImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
 
         // Click en el item completo
@@ -86,6 +90,32 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
     @Override
     public int getItemCount() {
         return listaListas.size();
+    }
+    
+    private void cargarImagen(ImageView imageView, String imagePath) {
+        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
+            try {
+                imageView.setImageURI(Uri.parse(imagePath));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            } catch (Exception e) {
+                imageView.setImageResource(R.drawable.ic_shopping_list);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            }
+        } else {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                if (bitmap != null) {
+                    imageView.setImageBitmap(bitmap);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                } else {
+                    imageView.setImageResource(R.drawable.ic_shopping_list);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                }
+            } catch (Exception e) {
+                imageView.setImageResource(R.drawable.ic_shopping_list);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            }
+        }
     }
 
     static class ListaViewHolder extends RecyclerView.ViewHolder {

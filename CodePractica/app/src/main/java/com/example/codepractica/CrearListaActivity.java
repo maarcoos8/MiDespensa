@@ -1,17 +1,30 @@
 package com.example.codepractica;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.example.codepractica.database.AppDatabase;
 import com.example.codepractica.database.entities.Lista;
+import com.example.codepractica.utils.ImageHelper;
 
 public class CrearListaActivity extends AppCompatActivity {
 
@@ -21,6 +34,15 @@ public class CrearListaActivity extends AppCompatActivity {
     private EditText etDescripcion;
     private String tipoLista;
     private TextView tvTitulo;
+    private CardView cardAnadirFoto;
+    private ImageView ivImagenLista;
+    private LinearLayout layoutPlaceholder;
+    private String imagenPath = null;
+    
+    private ActivityResultLauncher<Intent> cameraLauncher;
+    private ActivityResultLauncher<Intent> galleryLauncher;
+    private ActivityResultLauncher<String> permissionLauncher;
+    private ImageHelper imageHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,16 +52,20 @@ public class CrearListaActivity extends AppCompatActivity {
         // Obtener el tipo de lista del Intent
         tipoLista = getIntent().getStringExtra(EXTRA_TIPO_LISTA);
         if (tipoLista == null) {
-            tipoLista = ListasActivity.TIPO_COMPRA; // Por defecto lista de compra
+            tipoLista = ListasActivity.TIPO_COMPRA;
         }
 
+        inicializarLaunchers();
+        
         // Referencias a las vistas
         etNombre = findViewById(R.id.etNombre);
         etDescripcion = findViewById(R.id.etDescripcion);
         tvTitulo = findViewById(R.id.tvTitulo);
+        cardAnadirFoto = findViewById(R.id.cardAnadirFoto);
+        ivImagenLista = findViewById(R.id.ivImagenLista);
+        layoutPlaceholder = findViewById(R.id.layoutPlaceholder);
         Button btnGuardar = findViewById(R.id.btnGuardar);
         ImageButton btnAtras = findViewById(R.id.btnAtras);
-        ImageButton btnCancelar = findViewById(R.id.btnCancelar);
 
         // Configurar el título según el tipo
         if (tipoLista.equals(ListasActivity.TIPO_INVENTARIO)) {
@@ -50,15 +76,62 @@ public class CrearListaActivity extends AppCompatActivity {
 
         // Configurar botones de navegación
         btnAtras.setOnClickListener(v -> finish());
-        btnCancelar.setOnClickListener(v -> finish());
 
         // Configurar botón de guardar
         btnGuardar.setOnClickListener(v -> guardarLista());
 
-        // TODO: Implementar selección de imagen
-        findViewById(R.id.cardAnadirFoto).setOnClickListener(v -> {
-            Toast.makeText(this, "Seleccionar imagen (próximamente)", Toast.LENGTH_SHORT).show();
+        // Click en la foto
+        cardAnadirFoto.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                permissionLauncher.launch(Manifest.permission.CAMERA);
+            } else {
+                imageHelper.showImageSourceDialog(imagenPath != null);
+            }
         });
+    }
+    
+    private void inicializarLaunchers() {
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        imageHelper.handleCameraResult();
+                    }
+                });
+        
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        imageHelper.handleGalleryResult(result.getData());
+                    }
+                });
+        
+        permissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        imageHelper.showImageSourceDialog(imagenPath != null);
+                    } else {
+                        Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        
+        imageHelper = new ImageHelper(this, cameraLauncher, galleryLauncher, permissionLauncher,
+                new ImageHelper.ImageSelectionCallback() {
+                    @Override
+                    public void onImageSelected(String imagePath) {
+                        imagenPath = imagePath;
+                        mostrarImagen(imagePath);
+                    }
+
+                    @Override
+                    public void onImageDeleted() {
+                        imagenPath = null;
+                        ocultarImagen();
+                    }
+                });
     }
 
     private void guardarLista() {
@@ -77,7 +150,7 @@ public class CrearListaActivity extends AppCompatActivity {
         nuevaLista.nombre = nombre;
         nuevaLista.descripcion = descripcion.isEmpty() ? null : descripcion;
         nuevaLista.tipo = tipoLista;
-        nuevaLista.imagen = null; // TODO: Implementar cuando se añada selección de imagen
+        nuevaLista.imagen = imagenPath; // Guardar ruta de imagen
 
         // Guardar en la base de datos
         new Thread(() -> {
@@ -96,5 +169,25 @@ public class CrearListaActivity extends AppCompatActivity {
                 }
             });
         }).start();
+    }
+    
+    private void mostrarImagen(String imagePath) {
+        ivImagenLista.setVisibility(View.VISIBLE);
+        layoutPlaceholder.setVisibility(View.GONE);
+        
+        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
+            ivImagenLista.setImageURI(Uri.parse(imagePath));
+        } else {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            if (bitmap != null) {
+                ivImagenLista.setImageBitmap(bitmap);
+            }
+        }
+    }
+    
+    private void ocultarImagen() {
+        ivImagenLista.setVisibility(View.GONE);
+        layoutPlaceholder.setVisibility(View.VISIBLE);
+        ivImagenLista.setImageDrawable(null);
     }
 }

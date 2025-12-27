@@ -2,6 +2,9 @@ package com.example.codepractica.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +97,15 @@ public class ProductoListaAdapter extends RecyclerView.Adapter<ProductoListaAdap
         } else {
             holder.layoutCaducidad.setVisibility(View.GONE);
         }
+        
+        // Cargar imagen del producto si existe
+        if (producto.imagen != null && !producto.imagen.isEmpty()) {
+            cargarImagen(holder.ivImagen, producto.imagen);
+        } else {
+            holder.ivImagen.setImageResource(R.drawable.ic_products);
+            holder.ivImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            holder.ivImagen.setPadding(8, 8, 8, 8);
+        }
 
         // Click en el item para ir al detalle
         holder.itemView.setOnClickListener(v -> {
@@ -106,6 +118,37 @@ public class ProductoListaAdapter extends RecyclerView.Adapter<ProductoListaAdap
     @Override
     public int getItemCount() {
         return listaProductos.size();
+    }
+    
+    private void cargarImagen(ImageView imageView, String imagePath) {
+        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
+            try {
+                imageView.setImageURI(Uri.parse(imagePath));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setPadding(0, 0, 0, 0);
+            } catch (Exception e) {
+                imageView.setImageResource(R.drawable.ic_products);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imageView.setPadding(8, 8, 8, 8);
+            }
+        } else {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                if (bitmap != null) {
+                    imageView.setImageBitmap(bitmap);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    imageView.setPadding(0, 0, 0, 0);
+                } else {
+                    imageView.setImageResource(R.drawable.ic_products);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    imageView.setPadding(8, 8, 8, 8);
+                }
+            } catch (Exception e) {
+                imageView.setImageResource(R.drawable.ic_products);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imageView.setPadding(8, 8, 8, 8);
+            }
+        }
     }
 
     static class ProductoViewHolder extends RecyclerView.ViewHolder {

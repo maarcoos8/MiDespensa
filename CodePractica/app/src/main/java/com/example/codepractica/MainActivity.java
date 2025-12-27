@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("DB_TEST", "Base de datos inicializada");
             
             // Inicializar datos de ejemplo si la base de datos está vacía
-            DatabaseInitializer.inicializarDatosEjemplo(this);
+            DatabaseInitializer.inicializarDatosEjemplo(this);                                                                                            
         }).start();
 
         // Configurar botón de salir

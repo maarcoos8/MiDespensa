@@ -29,6 +29,7 @@ public class VerListaActivity extends AppCompatActivity {
     private int listaId;
     private Lista lista;
     private boolean esInventario;
+    private android.widget.LinearLayout layoutVacio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class VerListaActivity extends AppCompatActivity {
         // Referencias a las vistas
         recyclerViewProductos = findViewById(R.id.recyclerViewProductos);
         tvTitulo = findViewById(R.id.tvTituloLista);
+        layoutVacio = findViewById(R.id.layoutVacio);
 
         // Cargar información de la lista
         cargarInformacionLista();
@@ -104,6 +106,15 @@ public class VerListaActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 listaProductos.clear();
                 listaProductos.addAll(productos);
+                
+                // Mostrar u ocultar el mensaje de lista vacía
+                if (listaProductos.isEmpty()) {
+                    recyclerViewProductos.setVisibility(android.view.View.GONE);
+                    layoutVacio.setVisibility(android.view.View.VISIBLE);
+                } else {
+                    recyclerViewProductos.setVisibility(android.view.View.VISIBLE);
+                    layoutVacio.setVisibility(android.view.View.GONE);
+                }
                 
                 // Solo crear el adaptador si no existe
                 if (productoAdapter == null) {

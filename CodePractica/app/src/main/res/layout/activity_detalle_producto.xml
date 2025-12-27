@@ -114,13 +114,17 @@
 
             <!-- Tarjeta Cantidad -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardCantidad"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:cardBackgroundColor="#FFFFFF"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -129,7 +133,7 @@
                     android:padding="20dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
@@ -143,13 +147,20 @@
                             android:layout_marginEnd="8dp" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="CANTIDAD"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:textColor="#999999"
                             android:letterSpacing="0.05" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_settings"
+                            app:tint="#10B981" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -180,13 +191,17 @@
 
             <!-- Tarjeta Caducidad -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardCaducidad"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:cardBackgroundColor="#FFFFFF"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -195,7 +210,7 @@
                     android:padding="20dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
@@ -209,13 +224,20 @@
                             android:layout_marginEnd="8dp" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="CADUCIDAD"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:textColor="#999999"
                             android:letterSpacing="0.05" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_settings"
+                            app:tint="#FF9800" />
                     </LinearLayout>
 
                     <TextView

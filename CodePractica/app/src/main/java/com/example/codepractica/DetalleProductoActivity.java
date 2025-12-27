@@ -30,6 +30,9 @@ public class DetalleProductoActivity extends AppCompatActivity {
     private TextView tvNombre, tvDescripcion, tvCantidad, tvCaducidad, tvUbicacion, tvListaCompra, tvListaInventario;
     private Button btnEliminar, btnEditar;
     private ImageButton btnAtras;
+    private int ubicacionListaId = -1;
+    private int listaCompraId = -1;
+    private int listaInventarioId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,7 @@ public class DetalleProductoActivity extends AppCompatActivity {
                 for (Lista lista : listas) {
                     if (lista.id == producto.almacenado) {
                         ubicacion = lista.nombre;
+                        ubicacionListaId = lista.id;
                         break;
                     }
                 }
@@ -104,6 +108,7 @@ public class DetalleProductoActivity extends AppCompatActivity {
                 for (Lista lista : listas) {
                     if (lista.id == producto.lista_compra) {
                         listaCompra = lista.nombre;
+                        listaCompraId = lista.id;
                         break;
                     }
                 }
@@ -114,6 +119,7 @@ public class DetalleProductoActivity extends AppCompatActivity {
                 for (Lista lista : listas) {
                     if (lista.id == producto.lista_inventario) {
                         listaInventario = lista.nombre;
+                        listaInventarioId = lista.id;
                         break;
                     }
                 }
@@ -191,20 +197,35 @@ public class DetalleProductoActivity extends AppCompatActivity {
 
         // Click en ubicación
         findViewById(R.id.layoutUbicacion).setOnClickListener(v -> {
-            // TODO: Navegar a cambiar ubicación
-            Toast.makeText(this, "Cambiar ubicación (próximamente)", Toast.LENGTH_SHORT).show();
+            if (ubicacionListaId > 0) {
+                Intent intent = new Intent(this, VerListaActivity.class);
+                intent.putExtra(VerListaActivity.EXTRA_LISTA_ID, ubicacionListaId);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Este producto no tiene ubicación asignada", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Click en lista de inventario
         findViewById(R.id.layoutListaInventario).setOnClickListener(v -> {
-            // TODO: Navegar a cambiar lista de inventario
-            Toast.makeText(this, "Cambiar lista de inventario (próximamente)", Toast.LENGTH_SHORT).show();
+            if (listaInventarioId > 0) {
+                Intent intent = new Intent(this, VerListaActivity.class);
+                intent.putExtra(VerListaActivity.EXTRA_LISTA_ID, listaInventarioId);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Este producto no tiene lista de inventario asignada", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Click en lista de compra
         findViewById(R.id.layoutListaCompra).setOnClickListener(v -> {
-            // TODO: Navegar a cambiar lista de compra
-            Toast.makeText(this, "Cambiar lista de compra (próximamente)", Toast.LENGTH_SHORT).show();
+            if (listaCompraId > 0) {
+                Intent intent = new Intent(this, VerListaActivity.class);
+                intent.putExtra(VerListaActivity.EXTRA_LISTA_ID, listaCompraId);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Este producto no tiene lista de compra asignada", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

@@ -87,11 +87,15 @@ public class ProductosActivity extends AppCompatActivity {
     private void cargarProductos() {
         new Thread(() -> {
             AppDatabase db = AppDatabase.getInstance(this);
-            listaProductos = db.productoDao().obtenerTodos();
-            listaProductosFiltrados.clear();
-            listaProductosFiltrados.addAll(listaProductos);
+            List<Producto> productos = db.productoDao().obtenerTodos();
             
-            runOnUiThread(() -> productoAdapter.notifyDataSetChanged());
+            runOnUiThread(() -> {
+                listaProductos.clear();
+                listaProductos.addAll(productos);
+                listaProductosFiltrados.clear();
+                listaProductosFiltrados.addAll(listaProductos);
+                productoAdapter.notifyDataSetChanged();
+            });
         }).start();
     }
 

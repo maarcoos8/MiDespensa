@@ -99,12 +99,19 @@ public class VerListaActivity extends AppCompatActivity {
     private void cargarProductos() {
         new Thread(() -> {
             AppDatabase db = AppDatabase.getInstance(this);
-            listaProductos.clear();
-            listaProductos.addAll(db.productoDao().obtenerPorLista(listaId));
+            List<Producto> productos = db.productoDao().obtenerPorLista(listaId);
             
             runOnUiThread(() -> {
-                productoAdapter = new ProductoListaAdapter(listaProductos, this, esInventario);
-                recyclerViewProductos.setAdapter(productoAdapter);
+                listaProductos.clear();
+                listaProductos.addAll(productos);
+                
+                // Solo crear el adaptador si no existe
+                if (productoAdapter == null) {
+                    productoAdapter = new ProductoListaAdapter(listaProductos, this, esInventario);
+                    recyclerViewProductos.setAdapter(productoAdapter);
+                } else {
+                    productoAdapter.notifyDataSetChanged();
+                }
             });
         }).start();
     }

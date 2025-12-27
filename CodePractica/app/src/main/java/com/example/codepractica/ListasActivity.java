@@ -121,24 +121,27 @@ public class ListasActivity extends AppCompatActivity {
             AppDatabase db = AppDatabase.getInstance(this);
             
             // Obtener listas del tipo especificado
-            listaListas.clear();
-            cantidadProductos.clear();
-            
             List<Lista> listas = db.listaDao().obtenerPorTipo(tipoLista);
+            List<Integer> cantidades = new ArrayList<>();
             
             // Para cada lista, contar cuántos productos tiene
             for (Lista lista : listas) {
-                listaListas.add(lista);
                 int cantidad = db.productoDao().obtenerPorLista(lista.id).size();
-                cantidadProductos.add(cantidad);
+                cantidades.add(cantidad);
             }
             
-            listaListasFiltradas.clear();
-            listaListasFiltradas.addAll(listaListas);
-            cantidadProductosFiltrados.clear();
-            cantidadProductosFiltrados.addAll(cantidadProductos);
-            
-            runOnUiThread(() -> listaAdapter.notifyDataSetChanged());
+            // Actualizar las listas en el hilo principal
+            runOnUiThread(() -> {
+                listaListas.clear();
+                listaListas.addAll(listas);
+                cantidadProductos.clear();
+                cantidadProductos.addAll(cantidades);
+                listaListasFiltradas.clear();
+                listaListasFiltradas.addAll(listaListas);
+                cantidadProductosFiltrados.clear();
+                cantidadProductosFiltrados.addAll(cantidadProductos);
+                listaAdapter.notifyDataSetChanged();
+            });
         }).start();
     }
 

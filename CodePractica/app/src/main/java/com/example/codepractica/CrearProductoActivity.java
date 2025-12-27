@@ -171,27 +171,27 @@ public class CrearProductoActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 // Configurar spinner de inventarios
                 List<String> nombresInventarios = new ArrayList<>();
-                nombresInventarios.add("Selecciona un inventario"); // Opción por defecto
+                nombresInventarios.add("Seleccionar"); // Opción por defecto
                 for (Lista lista : listaInventarios) {
                     nombresInventarios.add(lista.nombre);
                 }
                 ArrayAdapter<String> adapterInventario = new ArrayAdapter<>(
-                    this, android.R.layout.simple_spinner_item, nombresInventarios
+                    this, R.layout.spinner_item, nombresInventarios
                 );
-                adapterInventario.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                adapterInventario.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinnerInventario.setAdapter(adapterInventario);
                 spinnerInventario.setSelection(0); // Seleccionar la opción "Selecciona..."
 
                 // Configurar spinner de listas de compra
                 List<String> nombresListas = new ArrayList<>();
-                nombresListas.add("Selecciona una lista"); // Opción por defecto
+                nombresListas.add("Seleccionar"); // Opción por defecto
                 for (Lista lista : listaCompras) {
                     nombresListas.add(lista.nombre);
                 }
                 ArrayAdapter<String> adapterLista = new ArrayAdapter<>(
-                    this, android.R.layout.simple_spinner_item, nombresListas
+                    this, R.layout.spinner_item, nombresListas
                 );
-                adapterLista.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                adapterLista.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinnerListaCompra.setAdapter(adapterLista);
                 spinnerListaCompra.setSelection(0); // Seleccionar la opción "Selecciona..."
 
@@ -223,7 +223,7 @@ public class CrearProductoActivity extends AppCompatActivity {
     }
 
     private void configurarBotones() {
-        btnAtras.setOnClickListener(v -> finish());
+        btnAtras.setOnClickListener(v -> mostrarDialogoSalir());
 
         // Selector de caducidad
         findViewById(R.id.layoutCaducidad).setOnClickListener(v -> mostrarSelectorFecha());
@@ -493,7 +493,18 @@ public class CrearProductoActivity extends AppCompatActivity {
         ivFotoProducto.setVisibility(View.VISIBLE);
         layoutPlaceholder.setVisibility(View.GONE);
         
-        // Cargar la imagen
+        // Primero intentar cargar como recurso drawable
+        try {
+            int resourceId = getResources().getIdentifier(imagePath, "drawable", getPackageName());
+            if (resourceId != 0) {
+                ivFotoProducto.setImageResource(resourceId);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Si no es un recurso, intentar cargar como URI o ruta de archivo
         if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
             // Es una URI
             ivFotoProducto.setImageURI(Uri.parse(imagePath));
@@ -510,5 +521,20 @@ public class CrearProductoActivity extends AppCompatActivity {
         ivFotoProducto.setVisibility(View.GONE);
         layoutPlaceholder.setVisibility(View.VISIBLE);
         ivFotoProducto.setImageDrawable(null);
+    }
+    
+    private void mostrarDialogoSalir() {
+        new AlertDialog.Builder(this)
+                .setTitle("Salir sin guardar")
+                .setMessage("Los cambios no se harán efectivos si sales ahora. ¿Estás seguro de que quieres volver atrás?")
+                .setPositiveButton("Salir", (dialog, which) -> finish())
+                .setNegativeButton("Cancelar", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+    
+    @Override
+    public void onBackPressed() {
+        mostrarDialogoSalir();
     }
 }

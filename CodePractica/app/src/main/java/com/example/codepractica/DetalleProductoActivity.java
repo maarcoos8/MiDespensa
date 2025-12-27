@@ -160,13 +160,26 @@ public class DetalleProductoActivity extends AppCompatActivity {
     }
     
     private void cargarImagen(String imagePath) {
+        // Primero intentar cargar como recurso drawable
+        try {
+            int resourceId = getResources().getIdentifier(imagePath, "drawable", getPackageName());
+            if (resourceId != 0) {
+                ivProductoImagen.setImageResource(resourceId);
+                ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Si no es un recurso, intentar cargar como URI o ruta de archivo
         if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
             try {
                 ivProductoImagen.setImageURI(Uri.parse(imagePath));
                 ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                return;
             } catch (Exception e) {
-                ivProductoImagen.setImageResource(R.drawable.ic_products);
-                ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                e.printStackTrace();
             }
         } else {
             try {
@@ -174,15 +187,16 @@ public class DetalleProductoActivity extends AppCompatActivity {
                 if (bitmap != null) {
                     ivProductoImagen.setImageBitmap(bitmap);
                     ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                } else {
-                    ivProductoImagen.setImageResource(R.drawable.ic_products);
-                    ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    return;
                 }
             } catch (Exception e) {
-                ivProductoImagen.setImageResource(R.drawable.ic_products);
-                ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                e.printStackTrace();
             }
         }
+        
+        // Si todo falla, usar imagen por defecto
+        ivProductoImagen.setImageResource(R.drawable.ic_products);
+        ivProductoImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
     }
 
     private void configurarBotones() {

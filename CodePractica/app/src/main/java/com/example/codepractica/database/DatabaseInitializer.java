@@ -24,21 +24,21 @@ public class DatabaseInitializer {
             listaNevera.nombre = "Nevera";
             listaNevera.descripcion = "Productos refrigerados";
             listaNevera.tipo = "ListaInventario";
-            listaNevera.imagen = "";
+            listaNevera.imagen = "nevera";
             long idNevera = db.listaDao().insertar(listaNevera);
 
             Lista listaDespensa = new Lista();
             listaDespensa.nombre = "Despensa";
             listaDespensa.descripcion = "Productos no perecederos";
             listaDespensa.tipo = "ListaInventario";
-            listaDespensa.imagen = "";
+            listaDespensa.imagen = "despensa";
             long idDespensa = db.listaDao().insertar(listaDespensa);
 
             Lista listaBotiquin = new Lista();
             listaBotiquin.nombre = "Botiquín";
             listaBotiquin.descripcion = "Medicamentos y productos de salud";
             listaBotiquin.tipo = "ListaInventario";
-            listaBotiquin.imagen = "";
+            listaBotiquin.imagen = "botiquin";
             long idBotiquin = db.listaDao().insertar(listaBotiquin);
 
             // Crear listas de la compra
@@ -46,21 +46,21 @@ public class DatabaseInitializer {
             listaCompraNevera.nombre = "Compra nevera";
             listaCompraNevera.descripcion = "Productos refrigerados";
             listaCompraNevera.tipo = "ListaCompra";
-            listaCompraNevera.imagen = "";
+            listaCompraNevera.imagen = "listanevera";
             long idCompraNevera = db.listaDao().insertar(listaCompraNevera);
 
             Lista listaCompraDespensa = new Lista();
             listaCompraDespensa.nombre = "Compra despensa";
             listaCompraDespensa.descripcion = "Productos no perecederos";
             listaCompraDespensa.tipo = "ListaCompra";
-            listaCompraDespensa.imagen = "";
+            listaCompraDespensa.imagen = "compradespensa";
             long idCompraDespensa = db.listaDao().insertar(listaCompraDespensa);
 
             Lista listaCompraFarmacia = new Lista();
             listaCompraFarmacia.nombre = "Compra farmacia";
             listaCompraFarmacia.descripcion = "Medicamentos y productos de salud";
             listaCompraFarmacia.tipo = "ListaCompra";
-            listaCompraFarmacia.imagen = "";
+            listaCompraFarmacia.imagen = "farmacia";
             long idCompraFarmacia = db.listaDao().insertar(listaCompraFarmacia);
 
             // Crear productos de ejemplo
@@ -71,7 +71,7 @@ public class DatabaseInitializer {
             lecheEntera.descripcion = "Leche entera pasteurizada 1L";
             lecheEntera.unidades = 2;
             lecheEntera.caducidad = System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L); // 7 días
-            lecheEntera.imagen = "";
+            lecheEntera.imagen = "lecheentera";
             lecheEntera.almacenado = (int) idNevera;
             lecheEntera.lista_inventario = (int) idNevera;
             lecheEntera.lista_compra = (int) idCompraNevera;
@@ -82,7 +82,7 @@ public class DatabaseInitializer {
             huevosL.descripcion = "Huevos tamaño L, docena";
             huevosL.unidades = 12;
             huevosL.caducidad = System.currentTimeMillis() + (14 * 24 * 60 * 60 * 1000L); // 14 días
-            huevosL.imagen = "";
+            huevosL.imagen = "huevos";
             huevosL.almacenado = (int) idNevera;
             huevosL.lista_inventario = (int) idNevera;
             huevosL.lista_compra = (int) idCompraNevera;
@@ -94,7 +94,7 @@ public class DatabaseInitializer {
             ibuprofeno.descripcion = "Ibuprofeno 600mg, caja de 20 comprimidos";
             ibuprofeno.unidades = 20;
             ibuprofeno.caducidad = System.currentTimeMillis() + (365 * 24 * 60 * 60 * 1000L); // 1 año
-            ibuprofeno.imagen = "";
+            ibuprofeno.imagen = "ibuprofeno";
             ibuprofeno.almacenado = (int) idBotiquin;
             ibuprofeno.lista_inventario = (int) idBotiquin;
             ibuprofeno.lista_compra = (int) idCompraFarmacia;
@@ -106,7 +106,7 @@ public class DatabaseInitializer {
             macarrones.descripcion = "Pasta macarrones 500g";
             macarrones.unidades = 3;
             macarrones.caducidad = System.currentTimeMillis() + (730 * 24 * 60 * 60 * 1000L); // 2 años
-            macarrones.imagen = "";
+            macarrones.imagen = "macarronesgallo";
             macarrones.almacenado = (int) idDespensa;
             macarrones.lista_inventario = (int) idDespensa;
             macarrones.lista_compra = (int) idCompraDespensa;
@@ -116,8 +116,7 @@ public class DatabaseInitializer {
             aceiteOliva.nombre = "Aceite de Oliva";
             aceiteOliva.descripcion = "Aceite de oliva virgen extra 1L";
             aceiteOliva.unidades = 1;
-            aceiteOliva.caducidad = System.currentTimeMillis() + (365 * 24 * 60 * 60 * 1000L); // 1 año
-            aceiteOliva.imagen = "";
+            aceiteOliva.imagen = "aceite";
             aceiteOliva.almacenado = (int) idDespensa;
             aceiteOliva.lista_inventario = (int) idDespensa;
             aceiteOliva.lista_compra = (int) idCompraDespensa;

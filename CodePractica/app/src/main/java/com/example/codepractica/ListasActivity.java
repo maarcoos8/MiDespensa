@@ -226,6 +226,7 @@ public class ListasActivity extends AppCompatActivity {
         // Productos
         findViewById(R.id.navProductos).setOnClickListener(v -> {
             startActivity(new Intent(this, ProductosActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             finish();
         });
 
@@ -235,8 +236,16 @@ public class ListasActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, ListasActivity.class);
                 intent.putExtra(EXTRA_TIPO_LISTA, TIPO_INVENTARIO);
                 startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
             }
+        });
+
+        // Inicio
+        findViewById(R.id.navInicio).setOnClickListener(v -> {
+            startActivity(new Intent(this, MainActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
 
         // Lista
@@ -245,14 +254,16 @@ public class ListasActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, ListasActivity.class);
                 intent.putExtra(EXTRA_TIPO_LISTA, TIPO_COMPRA);
                 startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
             }
         });
 
-        // Ajustes
-        findViewById(R.id.navAjustes).setOnClickListener(v -> {
-            // TODO: Navegar a AjustesActivity cuando esté creada
-            Toast.makeText(this, "Ajustes", Toast.LENGTH_SHORT).show();
+        // Recordatorio
+        findViewById(R.id.navRecordatorio).setOnClickListener(v -> {
+            startActivity(new Intent(this, RecordatorioActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
 
         // Actualizar el estado visual de la navegación

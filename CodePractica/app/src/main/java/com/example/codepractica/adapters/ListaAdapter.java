@@ -93,13 +93,26 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
     }
     
     private void cargarImagen(ImageView imageView, String imagePath) {
+        // Primero intentar cargar como recurso drawable
+        try {
+            int resourceId = context.getResources().getIdentifier(imagePath, "drawable", context.getPackageName());
+            if (resourceId != 0) {
+                imageView.setImageResource(resourceId);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Si no es un recurso, intentar cargar como URI o ruta de archivo
         if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
             try {
                 imageView.setImageURI(Uri.parse(imagePath));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                return;
             } catch (Exception e) {
-                imageView.setImageResource(R.drawable.ic_shopping_list);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                e.printStackTrace();
             }
         } else {
             try {
@@ -107,15 +120,16 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ListaViewHol
                 if (bitmap != null) {
                     imageView.setImageBitmap(bitmap);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                } else {
-                    imageView.setImageResource(R.drawable.ic_shopping_list);
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    return;
                 }
             } catch (Exception e) {
-                imageView.setImageResource(R.drawable.ic_shopping_list);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                e.printStackTrace();
             }
         }
+        
+        // Si todo falla, usar imagen por defecto
+        imageView.setImageResource(R.drawable.ic_shopping_list);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
     }
 
     static class ListaViewHolder extends RecyclerView.ViewHolder {

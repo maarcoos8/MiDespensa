@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -75,7 +76,7 @@ public class CrearListaActivity extends AppCompatActivity {
         }
 
         // Configurar botones de navegación
-        btnAtras.setOnClickListener(v -> finish());
+        btnAtras.setOnClickListener(v -> mostrarDialogoSalir());
 
         // Configurar botón de guardar
         btnGuardar.setOnClickListener(v -> guardarLista());
@@ -189,5 +190,20 @@ public class CrearListaActivity extends AppCompatActivity {
         ivImagenLista.setVisibility(View.GONE);
         layoutPlaceholder.setVisibility(View.VISIBLE);
         ivImagenLista.setImageDrawable(null);
+    }
+    
+    private void mostrarDialogoSalir() {
+        new AlertDialog.Builder(this)
+                .setTitle("Salir sin guardar")
+                .setMessage("Los cambios no se harán efectivos si sales ahora. ¿Estás seguro de que quieres volver atrás?")
+                .setPositiveButton("Salir", (dialog, which) -> finish())
+                .setNegativeButton("Cancelar", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+    
+    @Override
+    public void onBackPressed() {
+        mostrarDialogoSalir();
     }
 }

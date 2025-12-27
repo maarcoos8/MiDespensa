@@ -128,6 +128,15 @@ public class ProductosActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ListasActivity.class);
             intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_INVENTARIO);
             startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
+        });
+
+        // Inicio
+        findViewById(R.id.navInicio).setOnClickListener(v -> {
+            startActivity(new Intent(this, MainActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
 
         // Lista
@@ -135,12 +144,15 @@ public class ProductosActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ListasActivity.class);
             intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_COMPRA);
             startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
 
-        // Ajustes
-        findViewById(R.id.navAjustes).setOnClickListener(v -> {
-            // TODO: Navegar a AjustesActivity cuando esté creada
-            // startActivity(new Intent(this, AjustesActivity.class));
+        // Recordatorio
+        findViewById(R.id.navRecordatorio).setOnClickListener(v -> {
+            startActivity(new Intent(this, RecordatorioActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
     }
 }

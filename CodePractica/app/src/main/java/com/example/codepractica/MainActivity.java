@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Eliminar la base de datos para forzar la reinicialización
-        // this.deleteDatabase("despensa_db");
+         this.deleteDatabase("despensa_db");
 
         AppDatabase db = AppDatabase.getInstance(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -67,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
         btnVerListas.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ListasActivity.class);
             intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_COMPRA);
+            startActivity(intent);
+        });
+
+        // Configurar botón de recordatorio
+        Button btnRecordatorio = findViewById(R.id.btnRecordatorio);
+        btnRecordatorio.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, RecordatorioActivity.class);
             startActivity(intent);
         });
     }

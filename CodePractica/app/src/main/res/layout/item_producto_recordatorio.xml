@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    android:backgroundTint="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Imagen del producto con esquinas redondeadas -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#E0E0E0">
+
+            <ImageView
+                android:id="@+id/ivProductoImagen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_products" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Contenedor de texto (nombre, categoría y caducidad) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:id="@+id/tvProductoNombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Leche Entera"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <!-- Categoría/Inventario -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_category"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:id="@+id/tvProductoCategoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nevera"
+                    android:textSize="14sp"
+                    android:textColor="#666666" />
+            </LinearLayout>
+
+            <!-- Indicador de caducidad -->
+            <LinearLayout
+                android:id="@+id/layoutCaducidad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:visibility="visible">
+
+                <View
+                    android:id="@+id/viewIndicadorCaducidad"
+                    android:layout_width="4dp"
+                    android:layout_height="16dp"
+                    android:background="#10B981"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/tvCaducidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Caduca en 10 días"
+                    android:textSize="13sp"
+                    android:textColor="#10B981"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Flecha de navegación -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_right"
+            android:contentDescription="Ver detalle" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

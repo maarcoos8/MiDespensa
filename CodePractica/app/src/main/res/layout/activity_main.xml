@@ -6,49 +6,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="32dp"
     android:paddingVertical="16dp"
     android:gravity="center"
+    android:fitsSystemWindows="true"
     android:background="#FAFAFA"
     tools:context=".MainActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <!-- Logo y nombre de la aplicación -->
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="120dp">
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp">
 
         <ImageView
-            android:id="@+id/ivHome"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_home"
-            android:layout_alignParentStart="true"/>
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@mipmap/ic_launcher"
+            android:layout_marginBottom="16dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Inicio"
-            android:textSize="20sp"
+            android:text="MiDespensa"
+            android:textColor="#10B981"
+            android:textSize="32sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_centerHorizontal="true"/>
-
-    </RelativeLayout>
+            android:letterSpacing="0.02" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="40dp"
         android:gravity="center"
         android:text="Gestiona tu hogar de forma sencilla."
         android:textColor="@android:color/black"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/btnVerInventarios"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginHorizontal="24dp"
         android:text="  Ver Inventarios"
         android:backgroundTint="#34D399"
         android:drawableLeft="@drawable/ic_inventory_scaled"
@@ -64,8 +67,9 @@
         android:id="@+id/btnVerListas"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginHorizontal="24dp"
         android:text="  Ver Listas de la Compra"
-        android:backgroundTint="#A7F3D0"
+        android:backgroundTint="#34D399"
         android:drawableLeft="@drawable/ic_shopping_list_scaled"
         android:drawablePadding="12dp"
         android:textColor="@android:color/black"
@@ -79,9 +83,26 @@
         android:id="@+id/btnVerProductos"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginHorizontal="24dp"
         android:text="  Ver Productos"
-        android:backgroundTint="#A7F3D0"
+        android:backgroundTint="#34D399"
         android:drawableLeft="@drawable/ic_products_scaled"
+        android:drawablePadding="12dp"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingStart="24dp"
+        android:gravity="start|center_vertical"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btnRecordatorio"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="24dp"
+        android:text="  Recordatorio"
+        android:backgroundTint="#FFF3CD"
+        android:drawableLeft="@drawable/ic_reminder_scaled"
         android:drawablePadding="12dp"
         android:textColor="@android:color/black"
         android:textSize="16sp"

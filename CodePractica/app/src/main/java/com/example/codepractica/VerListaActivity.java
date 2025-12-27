@@ -1,6 +1,9 @@
 package com.example.codepractica;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +29,9 @@ public class VerListaActivity extends AppCompatActivity {
     private ProductoListaAdapter productoAdapter;
     private List<Producto> listaProductos;
     private TextView tvTitulo;
+    private ImageView ivListaImagen;
+    private TextView tvListaDescripcion;
+    private android.widget.LinearLayout layoutInfoLista;
     private int listaId;
     private Lista lista;
     private boolean esInventario;
@@ -48,6 +54,9 @@ public class VerListaActivity extends AppCompatActivity {
         recyclerViewProductos = findViewById(R.id.recyclerViewProductos);
         tvTitulo = findViewById(R.id.tvTituloLista);
         layoutVacio = findViewById(R.id.layoutVacio);
+        ivListaImagen = findViewById(R.id.ivListaImagen);
+        tvListaDescripcion = findViewById(R.id.tvListaDescripcion);
+        layoutInfoLista = findViewById(R.id.layoutInfoLista);
 
         // Cargar información de la lista
         cargarInformacionLista();
@@ -90,7 +99,39 @@ public class VerListaActivity extends AppCompatActivity {
 
             if (lista != null) {
                 esInventario = ListasActivity.TIPO_INVENTARIO.equals(lista.tipo);
-                runOnUiThread(() -> tvTitulo.setText(lista.nombre));
+                runOnUiThread(() -> {
+                    tvTitulo.setText(lista.nombre);
+                    
+                    // Verificar si hay imagen o descripción para mostrar
+                    boolean tieneImagen = lista.imagen != null && !lista.imagen.trim().isEmpty();
+                    boolean tieneDescripcion = lista.descripcion != null && !lista.descripcion.trim().isEmpty();
+                    
+                    // Mostrar siempre el layout si hay descripción o si queremos mostrar imagen (incluso por defecto)
+                    if (tieneDescripcion || true) {  // Siempre visible para mostrar imagen
+                        layoutInfoLista.setVisibility(android.view.View.VISIBLE);
+                        
+                        // Cargar imagen si existe, o mostrar icono por defecto
+                        if (tieneImagen) {
+                            cargarImagen(ivListaImagen, lista.imagen);
+                        } else {
+                            // Mostrar icono por defecto según el tipo
+                            if (esInventario) {
+                                ivListaImagen.setImageResource(R.drawable.ic_inventory);
+                            } else {
+                                ivListaImagen.setImageResource(R.drawable.ic_shopping_list);
+                            }
+                            ivListaImagen.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                        }
+                        
+                        // Mostrar descripción si existe
+                        if (tieneDescripcion) {
+                            tvListaDescripcion.setVisibility(android.view.View.VISIBLE);
+                            tvListaDescripcion.setText(lista.descripcion);
+                        } else {
+                            tvListaDescripcion.setVisibility(android.view.View.GONE);
+                        }
+                    }
+                });
                 
                 // Actualizar navegación según el tipo
                 runOnUiThread(this::actualizarEstadoNavegacion);
@@ -131,6 +172,8 @@ public class VerListaActivity extends AppCompatActivity {
         // Productos
         findViewById(R.id.navProductos).setOnClickListener(v -> {
             startActivity(new Intent(this, ProductosActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
 
         // Inventario
@@ -138,6 +181,15 @@ public class VerListaActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ListasActivity.class);
             intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_INVENTARIO);
             startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
+        });
+
+        // Inicio
+        findViewById(R.id.navInicio).setOnClickListener(v -> {
+            startActivity(new Intent(this, MainActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
 
         // Lista
@@ -145,11 +197,15 @@ public class VerListaActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ListasActivity.class);
             intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_COMPRA);
             startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
 
-        // Ajustes
-        findViewById(R.id.navAjustes).setOnClickListener(v -> {
-            Toast.makeText(this, "Ajustes", Toast.LENGTH_SHORT).show();
+        // Recordatorio
+        findViewById(R.id.navRecordatorio).setOnClickListener(v -> {
+            startActivity(new Intent(this, RecordatorioActivity.class));
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            finish();
         });
     }
 
@@ -187,5 +243,44 @@ public class VerListaActivity extends AppCompatActivity {
         cargarInformacionLista();
         // Recargar productos al volver a la actividad
         cargarProductos();
+    }
+    
+    private void cargarImagen(ImageView imageView, String imagePath) {
+        // Primero intentar cargar como recurso drawable
+        try {
+            int resourceId = getResources().getIdentifier(imagePath, "drawable", getPackageName());
+            if (resourceId != 0) {
+                imageView.setImageResource(resourceId);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Si no es un recurso, intentar cargar como URI o ruta de archivo
+        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
+            try {
+                imageView.setImageURI(Uri.parse(imagePath));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                if (bitmap != null) {
+                    imageView.setImageBitmap(bitmap);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        // Si todo falla, dejar la imagen por defecto del layout
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
     }
 }

@@ -25,16 +25,23 @@ import androidx.core.content.ContextCompat;
 
 import com.example.codepractica.database.AppDatabase;
 import com.example.codepractica.database.entities.Lista;
+import com.example.codepractica.utils.FormHelper;
 import com.example.codepractica.utils.ImageHelper;
 
 public class CrearListaActivity extends AppCompatActivity {
 
     public static final String EXTRA_TIPO_LISTA = "tipo_lista";
+    public static final String EXTRA_LISTA_ID = "lista_id";
     
     private EditText etNombre;
     private EditText etDescripcion;
     private String tipoLista;
     private TextView tvTitulo;
+    
+    // Variables para modo edición
+    private boolean modoEdicion = false;
+    private int listaIdEditar = -1;
+    private Lista listaOriginal = null;
     private CardView cardAnadirFoto;
     private ImageView ivImagenLista;
     private LinearLayout layoutPlaceholder;
@@ -50,9 +57,13 @@ public class CrearListaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_lista);
 
+        // Verificar si es modo edición
+        listaIdEditar = getIntent().getIntExtra(EXTRA_LISTA_ID, -1);
+        modoEdicion = listaIdEditar != -1;
+
         // Obtener el tipo de lista del Intent
         tipoLista = getIntent().getStringExtra(EXTRA_TIPO_LISTA);
-        if (tipoLista == null) {
+        if (tipoLista == null && !modoEdicion) {
             tipoLista = ListasActivity.TIPO_COMPRA;
         }
 
@@ -68,15 +79,24 @@ public class CrearListaActivity extends AppCompatActivity {
         Button btnGuardar = findViewById(R.id.btnGuardar);
         ImageButton btnAtras = findViewById(R.id.btnAtras);
 
-        // Configurar el título según el tipo
-        if (tipoLista.equals(ListasActivity.TIPO_INVENTARIO)) {
-            tvTitulo.setText("Crear Inventario");
+        // Configurar el título y texto del botón según el modo
+        if (modoEdicion) {
+            tvTitulo.setText("Editar Lista");
+            btnGuardar.setText("Actualizar");
+            // Cargar datos de la lista
+            cargarDatosLista();
         } else {
-            tvTitulo.setText("Crear Lista");
+            // Configurar el título según el tipo
+            if (tipoLista.equals(ListasActivity.TIPO_INVENTARIO)) {
+                tvTitulo.setText("Crear Inventario");
+            } else {
+                tvTitulo.setText("Crear Lista");
+            }
+            btnGuardar.setText("Guardar");
         }
 
         // Configurar botones de navegación
-        btnAtras.setOnClickListener(v -> mostrarDialogoSalir());
+        btnAtras.setOnClickListener(v -> FormHelper.mostrarDialogoSalir(this));
 
         // Configurar botón de guardar
         btnGuardar.setOnClickListener(v -> guardarLista());
@@ -124,13 +144,13 @@ public class CrearListaActivity extends AppCompatActivity {
                     @Override
                     public void onImageSelected(String imagePath) {
                         imagenPath = imagePath;
-                        mostrarImagen(imagePath);
+                        FormHelper.mostrarImagen(CrearListaActivity.this, ivImagenLista, layoutPlaceholder, imagePath);
                     }
 
                     @Override
                     public void onImageDeleted() {
                         imagenPath = null;
-                        ocultarImagen();
+                        FormHelper.ocultarImagen(ivImagenLista, layoutPlaceholder);
                     }
                 });
     }
@@ -146,64 +166,91 @@ public class CrearListaActivity extends AppCompatActivity {
             return;
         }
 
-        // Crear la nueva lista
-        Lista nuevaLista = new Lista();
-        nuevaLista.nombre = nombre;
-        nuevaLista.descripcion = descripcion.isEmpty() ? null : descripcion;
-        nuevaLista.tipo = tipoLista;
-        nuevaLista.imagen = imagenPath; // Guardar ruta de imagen
+        Lista lista;
+        if (modoEdicion) {
+            // Modo edición: usar la lista original y actualizar sus valores
+            lista = listaOriginal;
+            lista.nombre = nombre;
+            lista.descripcion = descripcion.isEmpty() ? null : descripcion;
+            lista.imagen = imagenPath;
+        } else {
+            // Modo creación: crear nueva lista
+            lista = new Lista();
+            lista.nombre = nombre;
+            lista.descripcion = descripcion.isEmpty() ? null : descripcion;
+            lista.tipo = tipoLista;
+            lista.imagen = imagenPath;
+        }
 
         // Guardar en la base de datos
+        Lista finalLista = lista;
         new Thread(() -> {
             AppDatabase db = AppDatabase.getInstance(this);
-            long id = db.listaDao().insertar(nuevaLista);
             
-            runOnUiThread(() -> {
-                if (id > 0) {
-                    Toast.makeText(this, "Lista creada correctamente", Toast.LENGTH_SHORT).show();
-                    
-                    // Volver a la pantalla de listas con el resultado OK
+            if (modoEdicion) {
+                db.listaDao().actualizar(finalLista);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Lista actualizada correctamente", Toast.LENGTH_SHORT).show();
                     setResult(RESULT_OK);
                     finish();
-                } else {
-                    Toast.makeText(this, "Error al crear la lista", Toast.LENGTH_SHORT).show();
-                }
-            });
+                });
+            } else {
+                long id = db.listaDao().insertar(finalLista);
+                runOnUiThread(() -> {
+                    if (id > 0) {
+                        Toast.makeText(this, "Lista creada correctamente", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Error al crear la lista", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }).start();
     }
-    
-    private void mostrarImagen(String imagePath) {
-        ivImagenLista.setVisibility(View.VISIBLE);
-        layoutPlaceholder.setVisibility(View.GONE);
-        
-        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
-            ivImagenLista.setImageURI(Uri.parse(imagePath));
-        } else {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            if (bitmap != null) {
-                ivImagenLista.setImageBitmap(bitmap);
+
+    private void cargarDatosLista() {
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getInstance(this);
+            listaOriginal = db.listaDao().obtenerTodas().stream()
+                    .filter(l -> l.id == listaIdEditar)
+                    .findFirst()
+                    .orElse(null);
+
+            if (listaOriginal != null) {
+                runOnUiThread(() -> {
+                    etNombre.setText(listaOriginal.nombre);
+                    if (listaOriginal.descripcion != null) {
+                        etDescripcion.setText(listaOriginal.descripcion);
+                    }
+                    
+                    // Cargar imagen si existe
+                    if (listaOriginal.imagen != null && !listaOriginal.imagen.isEmpty()) {
+                        imagenPath = listaOriginal.imagen;
+                        FormHelper.mostrarImagen(CrearListaActivity.this, ivImagenLista, layoutPlaceholder, imagenPath);
+                    }
+                    
+                    // Actualizar título según el tipo
+                    if (ListasActivity.TIPO_INVENTARIO.equals(listaOriginal.tipo)) {
+                        tvTitulo.setText("Editar Inventario");
+                    } else {
+                        tvTitulo.setText("Editar Lista");
+                    }
+                    
+                    // Guardar el tipo de lista
+                    tipoLista = listaOriginal.tipo;
+                });
+            } else {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Lista no encontrada", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
             }
-        }
-    }
-    
-    private void ocultarImagen() {
-        ivImagenLista.setVisibility(View.GONE);
-        layoutPlaceholder.setVisibility(View.VISIBLE);
-        ivImagenLista.setImageDrawable(null);
-    }
-    
-    private void mostrarDialogoSalir() {
-        new AlertDialog.Builder(this)
-                .setTitle("Salir sin guardar")
-                .setMessage("Los cambios no se harán efectivos si sales ahora. ¿Estás seguro de que quieres volver atrás?")
-                .setPositiveButton("Salir", (dialog, which) -> finish())
-                .setNegativeButton("Cancelar", null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+        }).start();
     }
     
     @Override
     public void onBackPressed() {
-        mostrarDialogoSalir();
+        FormHelper.mostrarDialogoSalir(this);
     }
 }

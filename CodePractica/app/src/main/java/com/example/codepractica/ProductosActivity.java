@@ -17,7 +17,7 @@ import com.example.codepractica.database.entities.Producto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductosActivity extends AppCompatActivity {
+public class ProductosActivity extends BaseNavigationActivity {
 
     private static final int REQUEST_CODE_DETALLE = 100;
     private RecyclerView recyclerViewProductos;
@@ -117,42 +117,8 @@ public class ProductosActivity extends AppCompatActivity {
         productoAdapter.notifyDataSetChanged();
     }
 
-    private void configurarBarraNavegacion() {
-        // Productos (ya estamos aquí)
-        findViewById(R.id.navProductos).setOnClickListener(v -> {
-            // Ya estamos en productos, no hacer nada
-        });
-
-        // Inventario
-        findViewById(R.id.navInventario).setOnClickListener(v -> {
-            Intent intent = new Intent(this, ListasActivity.class);
-            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_INVENTARIO);
-            startActivity(intent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Inicio
-        findViewById(R.id.navInicio).setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Lista
-        findViewById(R.id.navLista).setOnClickListener(v -> {
-            Intent intent = new Intent(this, ListasActivity.class);
-            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_COMPRA);
-            startActivity(intent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Recordatorio
-        findViewById(R.id.navRecordatorio).setOnClickListener(v -> {
-            startActivity(new Intent(this, RecordatorioActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
+    @Override
+    protected NavigationSection getActiveNavigationSection() {
+        return NavigationSection.PRODUCTOS;
     }
 }

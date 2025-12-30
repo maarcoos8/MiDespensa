@@ -86,7 +86,7 @@
                     android:id="@+id/viewIndicadorCaducidad"
                     android:layout_width="4dp"
                     android:layout_height="16dp"
-                    android:background="#10B981"
+                    android:background="@color/verde_principal"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="8dp" />
 
@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:text="Caduca en 10 días"
                     android:textSize="13sp"
-                    android:textColor="#10B981"
+                    android:textColor="@color/verde_principal"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

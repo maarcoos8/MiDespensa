@@ -27,6 +27,14 @@ import com.example.codepractica.database.AppDatabase;
 import com.example.codepractica.database.entities.Lista;
 import com.example.codepractica.utils.ImageHelper;
 
+/**
+ * NOTA: Esta clase ya NO se usa.
+ * La funcionalidad de editar listas se ha unificado en CrearListaActivity.
+ * CrearListaActivity ahora maneja tanto la creación como la edición de listas.
+ * 
+ * @deprecated Usar CrearListaActivity con EXTRA_LISTA_ID para editar listas
+ */
+@Deprecated
 public class EditarListaActivity extends AppCompatActivity {
 
     public static final String EXTRA_LISTA_ID = "lista_id";

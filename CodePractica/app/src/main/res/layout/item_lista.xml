@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:text="12 artículos"
                 android:textSize="14sp"
-                android:textColor="#999999"
+                android:textColor="@color/gris_claro"
                 android:layout_marginTop="4dp" />
         </LinearLayout>
 

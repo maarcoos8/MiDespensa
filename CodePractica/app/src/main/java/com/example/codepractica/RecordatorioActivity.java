@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class RecordatorioActivity extends AppCompatActivity {
+public class RecordatorioActivity extends BaseNavigationActivity {
 
     private RecyclerView recyclerViewProductos;
     private ProductoRecordatorioAdapter productoAdapter;
@@ -98,43 +98,9 @@ public class RecordatorioActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void configurarBarraNavegacion() {
-        // Productos
-        findViewById(R.id.navProductos).setOnClickListener(v -> {
-            startActivity(new Intent(this, ProductosActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Inventario
-        findViewById(R.id.navInventario).setOnClickListener(v -> {
-            Intent intent = new Intent(this, ListasActivity.class);
-            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_INVENTARIO);
-            startActivity(intent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Inicio
-        findViewById(R.id.navInicio).setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Lista
-        findViewById(R.id.navLista).setOnClickListener(v -> {
-            Intent intent = new Intent(this, ListasActivity.class);
-            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_COMPRA);
-            startActivity(intent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Recordatorio (ya estamos aquí)
-        findViewById(R.id.navRecordatorio).setOnClickListener(v -> {
-            // Ya estamos en recordatorio, no hacer nada
-        });
+    @Override
+    protected NavigationSection getActiveNavigationSection() {
+        return NavigationSection.RECORDATORIO;
     }
 
     @Override

@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Colores base -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Colores principales -->
     <color name="verde_principal">#10B981</color>
-    <color name="green_primary">#10B981</color>
-    <color name="green_light">#34D399</color>
-    <color name="green_lighter">#A7F3D0</color>
-    <color name="gray_text">#666666</color>
-    <color name="gray_light">#999999</color>
-    <color name="background_light">#F5F5F5</color>
+    <color name="verde_claro">#34D399</color>
+    <color name="verde_muy_claro">#A7F3D0</color>
+    
+    <!-- Colores de texto y grises -->
+    <color name="texto_gris">#666666</color>
+    <color name="gris_claro">#999999</color>
+    <color name="fondo_claro">#F5F5F5</color>
 </resources>

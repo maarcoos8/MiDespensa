@@ -90,7 +90,7 @@
                 android:layout_height="80dp"
                 android:src="@drawable/ic_calendar"
                 android:alpha="0.3"
-                app:tint="#999999" />
+                app:tint="@color/gris_claro" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -106,146 +106,13 @@
                 android:layout_height="wrap_content"
                 android:text="No hay productos próximos a caducar"
                 android:textSize="14sp"
-                android:textColor="#999999"
+                android:textColor="@color/gris_claro"
                 android:layout_marginTop="8dp"
                 android:gravity="center" />
         </LinearLayout>
 
         <!-- Barra de navegación inferior -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:background="#FFFFFF"
-            android:elevation="8dp"
-            android:weightSum="5">
-
-            <!-- Productos -->
-            <LinearLayout
-                android:id="@+id/navProductos"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_products"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Productos"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Inventario -->
-            <LinearLayout
-                android:id="@+id/navInventario"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_inventory"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Inventario"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Inicio -->
-            <LinearLayout
-                android:id="@+id/navInicio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_home"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Inicio"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Lista -->
-            <LinearLayout
-                android:id="@+id/navLista"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_shopping_list"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lista"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Recordatorio -->
-            <LinearLayout
-                android:id="@+id/navRecordatorio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_reminder"
-                    app:tint="#10B981" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Recordatorio"
-                    android:textSize="10sp"
-                    android:textColor="#10B981"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-        </LinearLayout>
+        <include layout="@layout/bottom_navigation" />
     </LinearLayout>
 
 </RelativeLayout>

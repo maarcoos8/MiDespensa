@@ -3,9 +3,6 @@ package com.example.codepractica.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +18,7 @@ import com.example.codepractica.R;
 import com.example.codepractica.database.AppDatabase;
 import com.example.codepractica.database.entities.Lista;
 import com.example.codepractica.database.entities.Producto;
+import com.example.codepractica.utils.FormHelper;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -119,7 +117,7 @@ public class ProductoRecordatorioAdapter extends RecyclerView.Adapter<ProductoRe
         
         // Cargar imagen del producto si existe
         if (producto.imagen != null && !producto.imagen.isEmpty()) {
-            cargarImagen(holder.ivImagen, producto.imagen);
+            FormHelper.cargarImagenEnAdapter(context, holder.ivImagen, producto.imagen, R.drawable.ic_products);
         } else {
             // Mostrar imagen por defecto
             holder.ivImagen.setImageResource(R.drawable.ic_products);
@@ -144,50 +142,6 @@ public class ProductoRecordatorioAdapter extends RecyclerView.Adapter<ProductoRe
         return listaProductos.size();
     }
     
-    private void cargarImagen(ImageView imageView, String imagePath) {
-        // Primero intentar cargar como recurso drawable
-        try {
-            int resourceId = context.getResources().getIdentifier(imagePath, "drawable", context.getPackageName());
-            if (resourceId != 0) {
-                imageView.setImageResource(resourceId);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(0, 0, 0, 0);
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        // Si no es un recurso, intentar cargar como URI o ruta de archivo
-        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
-            try {
-                imageView.setImageURI(Uri.parse(imagePath));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(0, 0, 0, 0);
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                if (bitmap != null) {
-                    imageView.setImageBitmap(bitmap);
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    imageView.setPadding(0, 0, 0, 0);
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
-        // Si todo falla, usar imagen por defecto
-        imageView.setImageResource(R.drawable.ic_products);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        imageView.setPadding(8, 8, 8, 8);
-    }
-
     static class ProductoViewHolder extends RecyclerView.ViewHolder {
         ImageView ivImagen;
         TextView tvNombre;

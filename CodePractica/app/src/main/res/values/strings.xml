@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">CodePractica</string>
+    
+    <!-- Diálogos comunes -->
+    <string name="dialog_exit_title">Salir sin guardar</string>
+    <string name="dialog_exit_message">Los cambios no se harán efectivos si sales ahora. ¿Estás seguro de que quieres volver atrás?</string>
+    <string name="dialog_exit_confirm">Salir</string>
+    <string name="dialog_cancel">Cancelar</string>
+    
+    <!-- Botones comunes -->
+    <string name="btn_save">Guardar</string>
+    <string name="btn_update">Actualizar</string>
+    <string name="btn_delete">Eliminar</string>
+    <string name="btn_edit">Editar</string>
+    
+    <!-- Validaciones -->
+    <string name="validation_name_required">Por favor, introduce un nombre</string>
+    <string name="permission_denied">Permiso denegado</string>
+    
+    <!-- Mensajes de éxito -->
+    <string name="success_created">%s creado correctamente</string>
+    <string name="success_updated">%s actualizado correctamente</string>
+    <string name="success_deleted">%s eliminado correctamente</string>
+    
+    <!-- Mensajes de error -->
+    <string name="error_loading">Error al cargar %s</string>
+    <string name="error_not_found">%s no encontrado</string>
 </resources>

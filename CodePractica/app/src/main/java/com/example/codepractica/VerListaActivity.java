@@ -21,7 +21,7 @@ import com.example.codepractica.database.entities.Producto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VerListaActivity extends AppCompatActivity {
+public class VerListaActivity extends BaseNavigationActivity {
 
     public static final String EXTRA_LISTA_ID = "lista_id";
     
@@ -73,8 +73,8 @@ public class VerListaActivity extends AppCompatActivity {
 
         // Configurar botón de editar
         findViewById(R.id.btnEditar).setOnClickListener(v -> {
-            Intent intent = new Intent(this, EditarListaActivity.class);
-            intent.putExtra(EditarListaActivity.EXTRA_LISTA_ID, listaId);
+            Intent intent = new Intent(this, CrearListaActivity.class);
+            intent.putExtra(CrearListaActivity.EXTRA_LISTA_ID, listaId);
             startActivity(intent);
         });
 
@@ -82,11 +82,21 @@ public class VerListaActivity extends AppCompatActivity {
         findViewById(R.id.fabAnadirProducto).setOnClickListener(v -> {
             Intent intent = new Intent(this, CrearProductoActivity.class);
             intent.putExtra("lista_id", listaId);
+            intent.putExtra("lista_tipo", lista != null ? lista.tipo : "");
             startActivity(intent);
         });
 
         // Configurar barra de navegación
         configurarBarraNavegacion();
+    }
+
+    @Override
+    protected NavigationSection getActiveNavigationSection() {
+        if (esInventario) {
+            return NavigationSection.INVENTARIO;
+        } else {
+            return NavigationSection.LISTA_COMPRA;
+        }
     }
 
     private void cargarInformacionLista() {
@@ -166,74 +176,6 @@ public class VerListaActivity extends AppCompatActivity {
                 }
             });
         }).start();
-    }
-
-    private void configurarBarraNavegacion() {
-        // Productos
-        findViewById(R.id.navProductos).setOnClickListener(v -> {
-            startActivity(new Intent(this, ProductosActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Inventario
-        findViewById(R.id.navInventario).setOnClickListener(v -> {
-            Intent intent = new Intent(this, ListasActivity.class);
-            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_INVENTARIO);
-            startActivity(intent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Inicio
-        findViewById(R.id.navInicio).setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Lista
-        findViewById(R.id.navLista).setOnClickListener(v -> {
-            Intent intent = new Intent(this, ListasActivity.class);
-            intent.putExtra(ListasActivity.EXTRA_TIPO_LISTA, ListasActivity.TIPO_COMPRA);
-            startActivity(intent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Recordatorio
-        findViewById(R.id.navRecordatorio).setOnClickListener(v -> {
-            startActivity(new Intent(this, RecordatorioActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-    }
-
-    private void actualizarEstadoNavegacion() {
-        // Obtener referencias a los iconos y textos
-        ImageView navInventarioIcon = findViewById(R.id.navInventarioIcon);
-        TextView navInventarioText = findViewById(R.id.navInventarioText);
-        ImageView navListaIcon = findViewById(R.id.navListaIcon);
-        TextView navListaText = findViewById(R.id.navListaText);
-
-        // Color gris por defecto
-        int colorGris = getResources().getColor(R.color.gray_light, null);
-        int colorVerde = getResources().getColor(R.color.verde_principal, null);
-
-        // Activar el correspondiente en verde
-        if (esInventario) {
-            // Inventario en verde, Lista en gris
-            navInventarioIcon.setColorFilter(colorVerde);
-            navInventarioText.setTextColor(colorVerde);
-            navListaIcon.setColorFilter(colorGris);
-            navListaText.setTextColor(colorGris);
-        } else {
-            // Lista en verde, Inventario en gris
-            navInventarioIcon.setColorFilter(colorGris);
-            navInventarioText.setTextColor(colorGris);
-            navListaIcon.setColorFilter(colorVerde);
-            navListaText.setTextColor(colorVerde);
-        }
     }
 
     @Override

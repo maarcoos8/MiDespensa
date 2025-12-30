@@ -4,9 +4,6 @@ import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -31,6 +28,7 @@ import com.google.android.material.button.MaterialButton;
 import com.example.codepractica.database.AppDatabase;
 import com.example.codepractica.database.entities.Lista;
 import com.example.codepractica.database.entities.Producto;
+import com.example.codepractica.utils.FormHelper;
 import com.example.codepractica.utils.ImageHelper;
 
 import java.text.SimpleDateFormat;
@@ -64,6 +62,10 @@ public class CrearProductoActivity extends AppCompatActivity {
     private int productoIdEditar = -1;
     private Producto productoOriginal = null;
     
+    // Variables para preselección de lista
+    private int listaIdPreseleccionada = -1;
+    private String listaTipoPreseleccionada = null;
+    
     // Launchers para imagen
     private ActivityResultLauncher<Intent> cameraLauncher;
     private ActivityResultLauncher<Intent> galleryLauncher;
@@ -78,6 +80,10 @@ public class CrearProductoActivity extends AppCompatActivity {
         // Verificar si es modo edición
         productoIdEditar = getIntent().getIntExtra("producto_id", -1);
         modoEdicion = productoIdEditar != -1;
+        
+        // Obtener datos de preselección de lista
+        listaIdPreseleccionada = getIntent().getIntExtra("lista_id", -1);
+        listaTipoPreseleccionada = getIntent().getStringExtra("lista_tipo");
 
         inicializarLaunchers();
         inicializarVistas();
@@ -126,13 +132,13 @@ public class CrearProductoActivity extends AppCompatActivity {
                     @Override
                     public void onImageSelected(String imagePath) {
                         imagenPath = imagePath;
-                        mostrarImagen(imagePath);
+                        FormHelper.mostrarImagen(CrearProductoActivity.this, ivFotoProducto, layoutPlaceholder, imagePath);
                     }
 
                     @Override
                     public void onImageDeleted() {
                         imagenPath = null;
-                        ocultarImagen();
+                        FormHelper.ocultarImagen(ivFotoProducto, layoutPlaceholder);
                     }
                 });
     }
@@ -213,6 +219,35 @@ public class CrearProductoActivity extends AppCompatActivity {
                             break;
                         }
                     }
+                } else if (listaIdPreseleccionada != -1 && listaTipoPreseleccionada != null) {
+                    // Modo creación con lista preseleccionada
+                    if ("ListaInventario".equals(listaTipoPreseleccionada)) {
+                        // Preseleccionar el inventario
+                        for (int i = 0; i < listaInventarios.size(); i++) {
+                            if (listaInventarios.get(i).id == listaIdPreseleccionada) {
+                                spinnerInventario.setSelection(i + 1); // +1 por el placeholder
+                                tvInventarioSeleccionado.setText(listaInventarios.get(i).nombre);
+                                inventarioSeleccionadoId = listaInventarios.get(i).id;
+                                almacenadoEnInventario = true;
+                                actualizarEstadoBotones();
+                                break;
+                            }
+                        }
+                        tvListaCompraSeleccionada.setText("Selecciona una lista");
+                    } else if ("ListaCompra".equals(listaTipoPreseleccionada)) {
+                        // Preseleccionar la lista de compra
+                        for (int i = 0; i < listaCompras.size(); i++) {
+                            if (listaCompras.get(i).id == listaIdPreseleccionada) {
+                                spinnerListaCompra.setSelection(i + 1); // +1 por el placeholder
+                                tvListaCompraSeleccionada.setText(listaCompras.get(i).nombre);
+                                listaCompraSeleccionadaId = listaCompras.get(i).id;
+                                almacenadoEnInventario = false;
+                                actualizarEstadoBotones();
+                                break;
+                            }
+                        }
+                        tvInventarioSeleccionado.setText("Selecciona un inventario");
+                    }
                 } else {
                     // Modo creación: no establecer valores por defecto
                     tvInventarioSeleccionado.setText("Selecciona un inventario");
@@ -223,7 +258,7 @@ public class CrearProductoActivity extends AppCompatActivity {
     }
 
     private void configurarBotones() {
-        btnAtras.setOnClickListener(v -> mostrarDialogoSalir());
+        btnAtras.setOnClickListener(v -> FormHelper.mostrarDialogoSalir(this));
 
         // Selector de caducidad
         findViewById(R.id.layoutCaducidad).setOnClickListener(v -> mostrarSelectorFecha());
@@ -329,7 +364,7 @@ public class CrearProductoActivity extends AppCompatActivity {
                 // Cargar imagen si existe
                 if (productoOriginal.imagen != null && !productoOriginal.imagen.isEmpty()) {
                     imagenPath = productoOriginal.imagen;
-                    mostrarImagen(imagenPath);
+                    FormHelper.mostrarImagen(CrearProductoActivity.this, ivFotoProducto, layoutPlaceholder, imagenPath);
                 }
                 
                 // Cargar fecha de caducidad
@@ -489,52 +524,8 @@ public class CrearProductoActivity extends AppCompatActivity {
 
 
     
-    private void mostrarImagen(String imagePath) {
-        ivFotoProducto.setVisibility(View.VISIBLE);
-        layoutPlaceholder.setVisibility(View.GONE);
-        
-        // Primero intentar cargar como recurso drawable
-        try {
-            int resourceId = getResources().getIdentifier(imagePath, "drawable", getPackageName());
-            if (resourceId != 0) {
-                ivFotoProducto.setImageResource(resourceId);
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        // Si no es un recurso, intentar cargar como URI o ruta de archivo
-        if (imagePath.startsWith("content://") || imagePath.startsWith("file://")) {
-            // Es una URI
-            ivFotoProducto.setImageURI(Uri.parse(imagePath));
-        } else {
-            // Es una ruta de archivo
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            if (bitmap != null) {
-                ivFotoProducto.setImageBitmap(bitmap);
-            }
-        }
-    }
-    
-    private void ocultarImagen() {
-        ivFotoProducto.setVisibility(View.GONE);
-        layoutPlaceholder.setVisibility(View.VISIBLE);
-        ivFotoProducto.setImageDrawable(null);
-    }
-    
-    private void mostrarDialogoSalir() {
-        new AlertDialog.Builder(this)
-                .setTitle("Salir sin guardar")
-                .setMessage("Los cambios no se harán efectivos si sales ahora. ¿Estás seguro de que quieres volver atrás?")
-                .setPositiveButton("Salir", (dialog, which) -> finish())
-                .setNegativeButton("Cancelar", null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-    
     @Override
     public void onBackPressed() {
-        mostrarDialogoSalir();
+        FormHelper.mostrarDialogoSalir(this);
     }
 }

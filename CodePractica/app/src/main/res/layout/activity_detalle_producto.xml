@@ -154,14 +154,14 @@
                             android:text="CANTIDAD"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:textColor="#999999"
+                            android:textColor="@color/gris_claro"
                             android:letterSpacing="0.05" />
 
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/ic_edit"
-                            app:tint="#10B981" />
+                            app:tint="@color/verde_principal" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -184,7 +184,7 @@
                             android:layout_height="wrap_content"
                             android:text=" Uds"
                             android:textSize="16sp"
-                            android:textColor="#999999"
+                            android:textColor="@color/gris_claro"
                             android:layout_marginStart="4dp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -231,7 +231,7 @@
                             android:text="CADUCIDAD"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:textColor="#999999"
+                            android:textColor="@color/gris_claro"
                             android:letterSpacing="0.05" />
 
                         <ImageView
@@ -267,7 +267,7 @@
                 android:text="ORGANIZACIÓN"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#999999"
+                android:textColor="@color/gris_claro"
                 android:letterSpacing="0.05"
                 android:layout_marginBottom="12dp"
                 android:paddingHorizontal="4dp" />
@@ -321,7 +321,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Ubicación"
                                 android:textSize="12sp"
-                                android:textColor="#999999" />
+                                android:textColor="@color/gris_claro" />
 
                             <TextView
                                 android:id="@+id/tvUbicacion"
@@ -385,7 +385,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Lista de Inventario"
                                 android:textSize="12sp"
-                                android:textColor="#999999" />
+                                android:textColor="@color/gris_claro" />
 
                             <TextView
                                 android:id="@+id/tvListaInventario"
@@ -449,7 +449,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Lista de Compra"
                                 android:textSize="12sp"
-                                android:textColor="#999999" />
+                                android:textColor="@color/gris_claro" />
 
                             <TextView
                                 android:id="@+id/tvListaCompra"

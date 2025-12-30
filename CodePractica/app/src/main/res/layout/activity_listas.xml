@@ -60,9 +60,9 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:hint="Buscar lista (ej. Compra Semanal)"
+
                 android:textColor="#000000"
-                android:textColorHint="#999999"
+                android:textColorHint="@color/gris_claro"
                 android:textSize="14sp"
                 android:background="@android:color/transparent"
                 android:paddingStart="8dp"
@@ -80,144 +80,7 @@
             android:clipToPadding="false" />
 
         <!-- Barra de navegación inferior -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:background="#FFFFFF"
-            android:elevation="8dp"
-            android:weightSum="5">
-
-            <!-- Productos -->
-            <LinearLayout
-                android:id="@+id/navProductos"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_products"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Productos"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Inventario -->
-            <LinearLayout
-                android:id="@+id/navInventario"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:id="@+id/navInventarioIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_inventory"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:id="@+id/navInventarioText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Inventario"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Inicio -->
-            <LinearLayout
-                android:id="@+id/navInicio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_home"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Inicio"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Lista -->
-            <LinearLayout
-                android:id="@+id/navLista"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:id="@+id/navListaIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_shopping_list"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:id="@+id/navListaText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lista"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-
-            <!-- Recordatorio -->
-            <LinearLayout
-                android:id="@+id/navRecordatorio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_reminder"
-                    app:tint="#999999" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Recordatorio"
-                    android:textSize="10sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-        </LinearLayout>
+        <include layout="@layout/bottom_navigation" />
     </LinearLayout>
 
     <!-- Botón flotante para añadir nueva lista -->
@@ -231,7 +94,7 @@
         android:layout_marginBottom="88dp"
         android:src="@drawable/ic_add_circle"
         app:tint="#FFFFFF"
-        app:backgroundTint="#10B981"
+        app:backgroundTint="@color/verde_principal"
         android:contentDescription="Añadir nueva lista"
         android:elevation="6dp" />
 

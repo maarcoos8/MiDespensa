@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -44,7 +45,15 @@ public class MainActivity extends AppCompatActivity {
         // Configurar botón de salir
         Button btnSalir = findViewById(R.id.btnSalir);
         btnSalir.setOnClickListener(v -> {
-            finishAffinity(); // Cierra la aplicación y todas sus activZidades
+            new AlertDialog.Builder(this)
+                    .setTitle("Salir de la aplicación")
+                    .setMessage("¿Estás seguro de que quieres salir?")
+                    .setPositiveButton("Salir", (dialog, which) -> {
+                        finishAffinity(); // Cierra la aplicación y todas sus actividades
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         });
 
         // Configurar botón de ver productos

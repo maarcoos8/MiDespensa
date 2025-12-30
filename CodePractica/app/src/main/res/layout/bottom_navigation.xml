@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomNavigationBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="#FFFFFF"
+    android:elevation="8dp"
+    android:weightSum="5">
+
+    <!-- Productos -->
+    <LinearLayout
+        android:id="@+id/navProductos"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/navProductosIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_products"
+            app:tint="@color/gris_claro" />
+
+        <TextView
+            android:id="@+id/navProductosText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Productos"
+            android:textSize="10sp"
+            android:textColor="@color/gris_claro"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Inventario -->
+    <LinearLayout
+        android:id="@+id/navInventario"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/navInventarioIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_inventory"
+            app:tint="@color/gris_claro" />
+
+        <TextView
+            android:id="@+id/navInventarioText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inventarios"
+            android:textSize="10sp"
+            android:textColor="@color/gris_claro"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Inicio -->
+    <LinearLayout
+        android:id="@+id/navInicio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/navInicioIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_home"
+            app:tint="@color/gris_claro" />
+
+        <TextView
+            android:id="@+id/navInicioText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inicio"
+            android:textSize="10sp"
+            android:textColor="@color/gris_claro"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Lista -->
+    <LinearLayout
+        android:id="@+id/navLista"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/navListaIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_shopping_list"
+            app:tint="@color/gris_claro" />
+
+        <TextView
+            android:id="@+id/navListaText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Listas"
+            android:textSize="10sp"
+            android:textColor="@color/gris_claro"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- Recordatorio -->
+    <LinearLayout
+        android:id="@+id/navRecordatorio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/navRecordatorioIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_reminder"
+            app:tint="@color/gris_claro" />
+
+        <TextView
+            android:id="@+id/navRecordatorioText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recordatorios"
+            android:textSize="10sp"
+            android:textColor="@color/gris_claro"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+</LinearLayout>

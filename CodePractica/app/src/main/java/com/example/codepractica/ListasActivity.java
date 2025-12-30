@@ -20,7 +20,7 @@ import com.example.codepractica.database.entities.Producto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListasActivity extends AppCompatActivity {
+public class ListasActivity extends BaseNavigationActivity {
 
     public static final String EXTRA_TIPO_LISTA = "tipo_lista";
     public static final String TIPO_COMPRA = "ListaCompra";
@@ -55,8 +55,10 @@ public class ListasActivity extends AppCompatActivity {
         // Configurar el título según el tipo
         if (tipoLista.equals(TIPO_INVENTARIO)) {
             tvTitulo.setText("Inventarios");
+            etBuscar.setHint("Buscar inventario (ej. Nevera)");
         } else {
             tvTitulo.setText("Listas de la Compra");
+            etBuscar.setHint("Buscar lista (ej. Compra nevera)");
         }
 
         // Configurar el RecyclerView
@@ -171,12 +173,17 @@ public class ListasActivity extends AppCompatActivity {
         PopupMenu popupMenu = new PopupMenu(this, anchorView);
         popupMenu.getMenuInflater().inflate(R.menu.menu_lista_opciones, popupMenu.getMenu());
         
+        // Configurar textos según el tipo de lista
+        String textoTipo = tipoLista.equals(TIPO_INVENTARIO) ? "inventario" : "lista";
+        popupMenu.getMenu().findItem(R.id.menu_editar).setTitle("Editar " + textoTipo);
+        popupMenu.getMenu().findItem(R.id.menu_eliminar).setTitle("Eliminar " + textoTipo);
+        
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             
             if (itemId == R.id.menu_editar) {
-                Intent intent = new Intent(this, EditarListaActivity.class);
-                intent.putExtra(EditarListaActivity.EXTRA_LISTA_ID, lista.id);
+                Intent intent = new Intent(this, CrearListaActivity.class);
+                intent.putExtra(CrearListaActivity.EXTRA_LISTA_ID, lista.id);
                 startActivity(intent);
                 return true;
             } else if (itemId == R.id.menu_eliminar) {
@@ -222,78 +229,12 @@ public class ListasActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void configurarBarraNavegacion() {
-        // Productos
-        findViewById(R.id.navProductos).setOnClickListener(v -> {
-            startActivity(new Intent(this, ProductosActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Inventario
-        findViewById(R.id.navInventario).setOnClickListener(v -> {
-            if (!tipoLista.equals(TIPO_INVENTARIO)) {
-                Intent intent = new Intent(this, ListasActivity.class);
-                intent.putExtra(EXTRA_TIPO_LISTA, TIPO_INVENTARIO);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
-            }
-        });
-
-        // Inicio
-        findViewById(R.id.navInicio).setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Lista
-        findViewById(R.id.navLista).setOnClickListener(v -> {
-            if (!tipoLista.equals(TIPO_COMPRA)) {
-                Intent intent = new Intent(this, ListasActivity.class);
-                intent.putExtra(EXTRA_TIPO_LISTA, TIPO_COMPRA);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
-            }
-        });
-
-        // Recordatorio
-        findViewById(R.id.navRecordatorio).setOnClickListener(v -> {
-            startActivity(new Intent(this, RecordatorioActivity.class));
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        });
-
-        // Actualizar el estado visual de la navegación
-        actualizarEstadoNavegacion();
-    }
-
-    private void actualizarEstadoNavegacion() {
-        // Obtener referencias a los iconos y textos
-        android.widget.ImageView navInventarioIcon = findViewById(R.id.navInventarioIcon);
-        android.widget.TextView navInventarioText = findViewById(R.id.navInventarioText);
-        android.widget.ImageView navListaIcon = findViewById(R.id.navListaIcon);
-        android.widget.TextView navListaText = findViewById(R.id.navListaText);
-
-        // Color gris por defecto
-        int colorGris = getResources().getColor(R.color.gray_light, null);
-        int colorVerde = getResources().getColor(R.color.verde_principal, null);
-
-        // Activar el correspondiente en verde
+    @Override
+    protected NavigationSection getActiveNavigationSection() {
         if (tipoLista.equals(TIPO_INVENTARIO)) {
-            // Inventario en verde, Lista en gris
-            navInventarioIcon.setColorFilter(colorVerde);
-            navInventarioText.setTextColor(colorVerde);
-            navListaIcon.setColorFilter(colorGris);
-            navListaText.setTextColor(colorGris);
+            return NavigationSection.INVENTARIO;
         } else {
-            // Lista en verde, Inventario en gris
-            navInventarioIcon.setColorFilter(colorGris);
-            navInventarioText.setTextColor(colorGris);
-            navListaIcon.setColorFilter(colorVerde);
-            navListaText.setTextColor(colorVerde);
+            return NavigationSection.LISTA_COMPRA;
         }
     }
 
